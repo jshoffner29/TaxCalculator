@@ -12,9 +12,9 @@ namespace TaxCalculator.SupportService
     {
         private readonly TaxjarApi client;
 
-        public TaxCalculatorTaxJar()
+        public TaxCalculatorTaxJar(string apikey)
         {
-            var apikey = "5da2f821eee4035db4771edab942a4cc";
+            //var apikey = "5da2f821eee4035db4771edab942a4cc";
             client = new TaxjarApi(apikey);
         }
 
