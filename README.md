@@ -22,3 +22,6 @@ Resources
     • SDK Documentation https://aka.ms/dotnet-sdk-docs
     • Release Notes https://aka.ms/dotnet5-release-notes
     • Tutorials https://aka.ms/dotnet-tutorials
+
+UML Diagrams\
+![alt text](https://github.com/jshoffner29/TaxCalculator/blob/master/TaxCalculator.Service/Tax%20Service%20UML.pdf?raw=true)
