@@ -8,6 +8,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TaxCalculator.Contract;
+using TaxCalculator.Service;
+using TaxCalculator.SupportService;
 
 namespace TaxCalculator.ClientApp
 {
@@ -24,6 +27,8 @@ namespace TaxCalculator.ClientApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.Add(new ServiceDescriptor(typeof(ITaxCalculatorService), new TaxCalculatorTaxJarService()));
+            services.Add(new ServiceDescriptor(typeof(IZipCodeService), new ZipCodeService()));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -4,47 +4,96 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TaxCalculator.Contract;
+using TaxCalculator.Model;
 using TaxCalculator.SupportService;
 
 namespace TaxCalculator.Service
 {
-    public class TaxService
+    public class TaxService : ITaxService
     {
-        private readonly ITaxCalculator taxCalculator;
+        public string ClientId { get; set; }
+        private readonly ITaxCalculatorService taxCalculator;
+        private readonly IZipCodeService zipCodeService;
 
-        public TaxService(string clientId)
+        public static List<USState> USStates
         {
-            // TODO: clientId and associated apikey should be stored in config
-
-            var apikey = "5da2f821eee4035db4771edab942a4cc";
-
-            switch (clientId)
+            get
             {
-                // Future client, which currently has no tax calculator implementation.
-                case "ClientNoImplementation":
+                return new List<USState>
+                    {
+                    new USState("Alaska","AK"), new USState("Alabama", "AL"), new USState("Arkansas", "AR"),new USState("Arizona", "AZ"),
+                    new USState("California", "CA"), new USState("Colorado", "CO"),new USState("Connecticut", "CT"), new USState("Delaware", "DE"),
+                    new USState("Florida", "FL"),new USState("Georgia","GA"),new USState("Hawaii", "HI"),new USState("Iowa", "IA"),
+                    new USState("Idaho", "ID"),new USState("Illinois", "IL"),new USState("Indiana", "IN"),new USState("Kansas", "KS"),
+                    new USState("Kentucky", "KY"),new USState("Louisiana", "LA"),new USState("Massachusetts", "MA"), new USState("Maryland","MD"),
+                    new USState("Maine", "ME"),new USState("Michigan", "MI"), new USState("Minnesota", "MN"),new USState("Missouri", "MO"),
+                    new USState("Mississippi", "MS"), new USState("Montana", "MT"),new USState("North Carolina", "NC"), new USState("North Dakota", "ND"),
+                    new USState("Nebraska", "NE"),new USState("New Hampshire","NH"), new USState("New Jersey", "NJ"), new USState("New Mexico", "NM"),
+                    new USState("Nevada", "NV"), new USState("New York", "NY"), new USState("Ohio", "OH"),new USState("Oklahoma", "OK"),
+                    new USState("Oregon", "OR"), new USState("Pennsylvania", "PA"),new USState("Rhode Island", "RI"),new USState("South Carolina","SC"),
+                    new USState("South Dakota", "SD"),new USState("Tennessee", "TN"), new USState("Texas", "TX"),new USState("Utah", "UT"),
+                    new USState("Virginia", "VA"),new USState("Vermont", "VT"),new USState("Washington", "WA"), new USState("Wisconsin", "WI"),
+                    new USState("West Virginia","WV"),new USState("Wyoming", "WY") };
+            }
+        }
 
-                    throw new ArgumentException($"Unable to find tax calculator for {clientId}", "clientid");
+        public TaxService(string clientId,
+            ITaxCalculatorService _taxCalculator,
+            IZipCodeService _zipCodeService)
+        {
+            ClientId = clientId;
 
+            taxCalculator = _taxCalculator;
+            zipCodeService = _zipCodeService;
+
+            SetTaxCalculator();
+        }
+        public IEnumerable<USLocation> GetUSLocations(string stateCode)
+        {
+            return zipCodeService.GetUSLocations(stateCode);
+        }
+        /// <summary>
+        /// Categories of inventory items
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<Category> GetCategories()
+        {
+            return taxCalculator.GetCategories();
+        }
+
+        public decimal GetTaxForOrder(Order order)
+        {
+            return taxCalculator.GetTaxForOrder(order);
+        }
+
+        public decimal GetTaxRateForLocation(TaxByLocation taxByLocation)
+        {
+            return taxCalculator.GetTaxRateForLocation(taxByLocation);
+        }
+
+        #region Support Methods
+        public void SetTaxCalculator()
+        {
+            // TODO: Store secret keys through: Azure Vault -or- local only file (not in source control)
+            var apikey = string.Empty;
+
+            switch (ClientId)
+            {
+                case "UnSupportedClient":
+                    // case option here to validate proper error handling.
                     break;
-
-                // Use Tax Jar calculator as default
                 default:
-                    // TODO: retrieve default config settings
-                    // DEFAULT CLIENT: api key for default
-                    taxCalculator = new TaxCalculatorTaxJar(apikey);
+                    apikey = "5da2f821eee4035db4771edab942a4cc";
                     break;
             }
 
-            // Consider a factory function that retrieves all of the support services
-        }
-        public void GetTaxForOrder()
-        {
-            taxCalculator.GetTaxForOrder();
-        }
+            if (string.IsNullOrEmpty(apikey))
+            {
+                throw new ArgumentNullException("Unable to find tax calculatory api key");
+            }
 
-        public decimal GetTaxRateForLocation(string zipcode)
-        {
-            return taxCalculator.GetTaxRateForLocation(zipcode);
+            taxCalculator.Initialize(apikey);
         }
+        #endregion
     }
 }

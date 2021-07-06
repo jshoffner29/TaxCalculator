@@ -1,11 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\TaxCalculator.Contract\TaxCalculator.Contract.csproj" />
+    <ProjectReference Include="..\TaxCalculator.Model\TaxCalculator.Model.csproj" />
     <ProjectReference Include="..\TaxCalculator.SupportService\TaxCalculator.SupportService.csproj" />
   </ItemGroup>
 

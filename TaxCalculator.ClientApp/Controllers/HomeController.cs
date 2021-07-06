@@ -6,7 +6,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using TaxCalculator.ClientApp.Models;
+using TaxCalculator.Model;
 using TaxCalculator.Service;
+using TaxCalculator.SupportService;
 
 namespace TaxCalculator.ClientApp.Controllers
 {
@@ -21,8 +23,33 @@ namespace TaxCalculator.ClientApp.Controllers
 
         public IActionResult Index()
         {
-            var s = new TaxService("client 1");
-            var result = s.GetTaxRateForLocation("90404-3370");
+            var s = new TaxService("client 1", new TaxCalculatorTaxJarService(), new ZipCodeService());
+
+            var result = s.GetTaxRateForLocation(new TaxByLocation { FromZipCode = "90404-3370" });
+
+            var order = new Order
+            {
+                USLocationFrom = new USLocation
+                {
+                    Street = "9500 Gilman Drive",
+                    City = "La Jolla",
+                    StateCode = "CA",
+                    ZipCode = "92093"
+                },
+                USLocationTo = new USLocation
+                {
+                    Street = "1335 E 103rd St",
+                    City = "Los Angeles",
+                    StateCode = "CA",
+                    ZipCode = "90002"
+                },
+                LineItems = new List<OrderLineItem>
+                {
+                    new OrderLineItem { Quanitity = 2, UnitPrice = 7 }
+                }
+            };
+
+            var taxTotal = s.GetTaxForOrder(order);
             return View();
         }
 
