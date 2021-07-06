@@ -8,13 +8,28 @@ namespace TaxCalculator.Contract
     /// </summary>
     public interface ITaxCalculatorService
     {
+        /// <summary>
+        /// Initialize the service.
+        /// </summary>
+        /// <param name="clientId">Application's client</param>
         void Initialize(string clientId);
-        // Get the tax rate for a location
+        /// <summary>
+        /// Get state sales tax rate for given location
+        /// </summary>
+        /// <param name="taxByLocation">From (optional) street and (required) zipcode entity.</param>
+        /// <returns></returns>
         decimal GetTaxRateForLocation(TaxByLocation taxByLocation);
 
-        // Get taxes for the order
+        /// <summary>
+        /// Get amount of sales tax to collect
+        /// </summary>
+        /// <param name="order">Order entity</param>
+        /// <returns></returns>
         decimal GetTaxForOrder(Order order);
-        // Get all categories (from Tax Jar service)
+        /// <summary>
+        /// Get all order line item categories.
+        /// </summary>
+        /// <returns></returns>
         IEnumerable<Category> GetCategories();
     }
 }

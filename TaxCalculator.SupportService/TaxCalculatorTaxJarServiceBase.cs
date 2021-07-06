@@ -7,22 +7,18 @@ using Taxjar;
 
 namespace TaxCalculator.SupportService
 {
-    public abstract class TaxCalculatorTaxJarServiceBase: ITaxCalculatorService
+    public abstract class TaxCalculatorTaxJarServiceBase : ITaxCalculatorService
     {
-        public TaxjarApi Client { get; private set; }
+        private TaxjarApi client;
 
         public TaxCalculatorTaxJarServiceBase()
         { }
-        public void Initialize(string apikey)
-        {
-            Client = new TaxjarApi(apikey);
-        }
         public decimal GetTaxForOrder(Model.Order order)
         {
             if (order == null)
                 throw new ArgumentNullException("The order is null.");
 
-            var taxForOrder = Client.TaxForOrder(order.GetOrder());
+            var taxForOrder = client.TaxForOrder(order.GetOrder());
 
             if (taxForOrder == null)
                 throw new ArgumentNullException("Unable to retrieve tax for order");
@@ -38,29 +34,24 @@ namespace TaxCalculator.SupportService
             if (string.IsNullOrWhiteSpace(taxByLocation.FromZipCode))
                 throw new ArgumentNullException("The zip code value is required to find the tax rates for this location.");
 
-            //var rates = client.RatesForLocation("90404-3370");
             RateResponseAttributes rates = null;
             try
             {
-                rates = Client.RatesForLocation(taxByLocation.FromZipCode);
+                rates = client.RatesForLocation(taxByLocation.FromZipCode);
             }
             catch (Exception)
             {
                 // swallow exception here. Error handling managed below.
-            }            
+            }
 
             if (rates == null)
                 throw new ArgumentNullException($"Unable to find the tax rates for zip code {taxByLocation.FromZipCode}");
 
             return rates.StateRate;
         }
-        /// <summary>
-        /// Get all categories
-        /// </summary>
-        /// <returns></returns>
         public IEnumerable<Model.Category> GetCategories()
         {
-            return Client.Categories()
+            return client.Categories()
                     .Select(s => new Model.Category
                     {
                         Name = s.Name,
@@ -68,5 +59,12 @@ namespace TaxCalculator.SupportService
                         Description = s.Description
                     });
         }
+
+        #region Support Methods
+        public virtual void Initialize(string apikey)
+        {
+            client = new TaxjarApi(apikey);
+        }
+        #endregion
     }
 }

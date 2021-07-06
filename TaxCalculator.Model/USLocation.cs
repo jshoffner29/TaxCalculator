@@ -6,11 +6,11 @@ namespace TaxCalculator.Model
     {
         public string Street { get; set; }
         public string City { get; set; }
+        public string ZipCode { get; set; }
         /// <summary>
         /// Only supports US 
         /// </summary>
         public string Country { get; } = "US";
-        public string ZipCode { get; set; }
         public double Lat { get; set; }
         public double Lng { get; set; }
 

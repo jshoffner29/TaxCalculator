@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace TaxCalculator.Model
 {
-    public class Order : TaxByLocation
+    public class Order
     {
         public USLocation USLocationFrom { get; set; }
         public USLocation USLocationTo { get; set; }

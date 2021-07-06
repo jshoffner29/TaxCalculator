@@ -25,6 +25,7 @@ namespace TaxCalculator.ClientApp.Controllers
         {
             var s = new TaxService("client 1", new TaxCalculatorTaxJarService(), new ZipCodeService());
 
+            var us = s.GetUSLocations("HI");
             var result = s.GetTaxRateForLocation(new TaxByLocation { FromZipCode = "90404-3370" });
 
             var order = new Order
