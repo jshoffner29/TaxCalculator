@@ -14,14 +14,15 @@ Nuget Packages\
     • TaxJar 3.3.1\
     • Moq 4.16.1\
 
-This product collects usage data
+This product collects usage data\
     • More information and opt-out https://aka.ms/dotnet-cli-telemetry
 
 Resources
-    • .NET Documentation https://aka.ms/dotnet-docs
-    • SDK Documentation https://aka.ms/dotnet-sdk-docs
-    • Release Notes https://aka.ms/dotnet5-release-notes
+    • .NET Documentation https://aka.ms/dotnet-docs \
+    • SDK Documentation https://aka.ms/dotnet-sdk-docs \
+    • Release Notes https://aka.ms/dotnet5-release-notes \
     • Tutorials https://aka.ms/dotnet-tutorials
 
 # UML Diagrams
 ![alt text](https://github.com/jshoffner29/TaxCalculator/blob/master/TaxCalculator.Service/Tax%20Service%20Composition.PNG?raw=true)
+![alt text](https://github.com/jshoffner29/TaxCalculator/blob/master/TaxCalculator.Service/Model%20Entities%20and%20Composition.PNG?raw=true)
