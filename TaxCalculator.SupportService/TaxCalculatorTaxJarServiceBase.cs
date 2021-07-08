@@ -37,7 +37,13 @@ namespace TaxCalculator.SupportService
             RateResponseAttributes rates = null;
             try
             {
-                rates = client.RatesForLocation(taxByLocation.FromZipCode);
+                rates = string.IsNullOrWhiteSpace(taxByLocation.FromStreet)
+                    ? client.RatesForLocation(taxByLocation.FromZipCode)
+                    : client.RatesForLocation(taxByLocation.FromZipCode, new
+                    {
+                        street = taxByLocation.FromStreet,
+                        country = "US"
+                    });
             }
             catch (Exception)
             {

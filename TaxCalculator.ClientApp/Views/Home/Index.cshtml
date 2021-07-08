@@ -2,11 +2,151 @@
     ViewData["Title"] = "Home Page";
 }
 
+@model TaxServiceViewModel
+
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 
-    <p>
-        <a href="https://www.google.com/maps?q=21.3908,-157.9332">Navigate to Aiea</a>
-    </p>
+    This application allows the user to:
+    <ol>
+        <li>View all the zipcodes for a state</li>
+        <li>View the sales tax for a zipcode</li>
+        <li>View the geo map location of a zipcode (in google maps)</li>
+        <li>Create an order of item(s) and view the total taxes for that order.</li>
+    </ol>
+
+
+
+    @* Select a State *@
+    @using (Html.BeginForm("StateSelected", "Home", FormMethod.Post))
+    {
+        <div class="state-select-container">
+            @Html.DropDownListFor(m => m.StateCodeSelected, Model.GetViewList<USStateModel>(), " -- Please select a state -- ")
+            <input type="submit" value="Search States" />
+        </div>
+    }
+
+    @*Show Zip Codes for state*@
+    @if (Model.USSlocations != null && Model.USSlocations.Any())
+    {
+        // No ZipCode has been selected
+        @if (string.IsNullOrEmpty(Model.ZipCodeSelected))
+        {
+            @using (Html.BeginForm("ZipCodeSelected", "Home", FormMethod.Post))
+            {
+                <div class="row zip-code-container">
+                    @foreach (var location in Model.USSlocations)
+                    {
+                        <div class="col-md-3 section">
+                            <div>@location.City</div>
+                            <div>@location.ZipCode</div>
+                            <div><a href="https://www.google.com/maps?q=@location.Lat,@location.Lng" target="_blank">View In Map</a></div>
+                        </div>
+                        <input type="submit" name="zipCode" value="@location.ZipCode" />
+
+                    }
+                </div>
+            }
+        }
+        else // ZipCode has been selected
+        {
+            @using (Html.BeginForm("TaxRateForLocation", "Home", FormMethod.Post))
+            {
+                <div class="row zip-code-selected-container">
+                    <div>
+                        @Html.LabelForModel("Street Address:")
+                        @Html.TextBoxFor(m => m.StreetSelected)
+                    </div>
+                    <div>@Model.ZipCodeSelected</div>
+                </div>
+
+                <input type="submit" name="submit" value="Update" /> // Get tax rate
+                <input type="submit" name="clear" value="Clear" /> // Clear zip code
+                <p>
+                    The tax for this location is: @(Model.TaxRateForLocation * 100)%
+                </p>
+            }
+        }
+
+    }
+
+    @*Order Items*@
+    @if (!string.IsNullOrEmpty(Model.ZipCodeSelected))
+    {
+        @using (Html.BeginForm("OrderItemSelected", "Home", FormMethod.Post))
+        {
+            <div class="order-container">
+                <p>
+                    <h4>Create an order by selecting the item's category, quantity, and unit price.</h4>
+                    <div>
+                        <div>
+                            @Html.LabelForModel("Category")
+                            @Html.DropDownListFor(m => m.OrderItemSelected.ProductTaxCode, Model.GetViewList<CategoryModel>(), " -- Please select an item -- ", new { @Title = "Tooltip here" })
+                        </div>
+
+                        <div>
+                            @Html.LabelForModel("Quantity")
+                            @Html.TextBoxFor(m => m.OrderItemSelected.Quantity)
+                        </div>
+                        <div>
+                            @Html.LabelForModel("Price")
+                            @Html.TextBoxFor(m => m.OrderItemSelected.UnitPrice, new { @class = "required numeric", id = "CurrentBalance", Value = String.Format("{0:C}", Model.OrderItemSelected) })
+                        </div>
+                    </div>
+                    
+                    <input type="submit" name="orderItem" value="Add Item" />
+                </p>
+                <p>
+                    <hr />
+                    <span>Hover over name and description to see full</span>
+                    <div class="row">
+                        @foreach (var item in @Model.OrderItems)
+                        {
+                        <div class="order-items-container col-3">
+                            <div>
+                                <label>Name:</label>
+                                <span title="@item.Name">@Model.GetShortText(item.Name)</span>
+                            </div>
+                            <div>
+                                <label>Description:</label>
+                                <span title="@item.Description">@Model.GetShortText(item.Description)</span>
+                            </div>
+                            <div>
+                                <label>Tax Code:</label>
+                                <span>@item.ProductTaxCode</span>
+                            </div>
+                            <div>
+                                <label>Quantity:</label>
+                                <span>@item.Quantity</span>
+                            </div>
+                            <div>
+                                <label>Price:</label>
+                                <span>@item.UnitPrice.ToString("C")</span>
+                            </div>
+                            <div>
+                                <label>Total Price:</label>
+                                <span title="Quantity * Price">@Math.Round(item.Quantity * item.UnitPrice,2).ToString("C")</span>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                </p>
+            </div>
+        }
+    }
+    @using (Html.BeginForm("OrderTaxAmount", "Home", FormMethod.Post))
+    {
+        @if (Model.OrderItems.Any())
+        {
+            <div class="submit-section">
+                <div>
+                    @*<label>Total Tax Amount for Order (Total Order is: @Model.OrderItems.Sum(s => s.Quantity * s.UnitPrice).ToString("C")):</label>*@
+                    <label>Total Tax Amount for this @Model.OrderItems.Sum(s => s.Quantity * s.UnitPrice).ToString("C") Order is:</label>
+                    <span>@Model.OrderTaxAmount.ToString("C")</span>
+                </div>
+                <input type="submit" name="orderTax" value="Calculate" />
+            </div>
+        }
+    }
+
 </div>

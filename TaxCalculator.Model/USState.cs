@@ -5,9 +5,9 @@
         public string StateName { get; set; }
         public string StateCode { get; set; }
 
-        public USState(string state, string stateCode)
+        public USState(string stateName, string stateCode)
         {
-            this.StateName = state;
+            this.StateName = stateName;
             this.StateCode = stateCode;
         }
 

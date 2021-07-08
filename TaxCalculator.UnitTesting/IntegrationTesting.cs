@@ -24,7 +24,7 @@ namespace TaxCalculator.UnitTesting
             taxCalculator = new TaxCalculatorTaxJarService();
             zipCodeService = new ZipCodeService();
 
-            taxServiceClient = new TaxService(activeClientId, taxCalculator, zipCodeService);
+            taxServiceClient = new TaxService(taxCalculator, zipCodeService, activeClientId);
         }
         #endregion
 

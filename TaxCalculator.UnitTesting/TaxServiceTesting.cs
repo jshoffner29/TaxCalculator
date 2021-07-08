@@ -21,7 +21,7 @@ namespace TaxCalculator.UnitTesting
             taxCalculatorService = new Mock<ITaxCalculatorService>();
             zipCodeService = new Mock<IZipCodeService>();
 
-            taxServiceClient = new TaxService(activeClientId, taxCalculatorService.Object, zipCodeService.Object);
+            taxServiceClient = new TaxService(taxCalculatorService.Object, zipCodeService.Object, activeClientId);
         }
         #endregion
 
@@ -49,7 +49,7 @@ namespace TaxCalculator.UnitTesting
             var zipCodeService = new Mock<IZipCodeService>();
 
             // Act
-            new TaxService(clientId, taxCalculatorService.Object, zipCodeService.Object);
+            new TaxService(taxCalculatorService.Object, zipCodeService.Object, clientId);
 
             // Assert - no assertion, should throw exception            
         }
@@ -63,7 +63,7 @@ namespace TaxCalculator.UnitTesting
             var zipCodeService = new Mock<IZipCodeService>();
 
             // Act
-            var results = new TaxService(clientId, taxCalculatorService.Object, zipCodeService.Object);
+            var results = new TaxService(taxCalculatorService.Object, zipCodeService.Object, clientId);
 
             // Assert
             taxCalculatorService.Verify(v => v.Initialize(It.IsAny<string>()), Times.Once);

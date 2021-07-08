@@ -13,9 +13,9 @@ namespace TaxCalculator.Service
         private readonly IZipCodeService zipCodeService;
 
         public TaxServiceBase(
-            string clientId,
             ITaxCalculatorService _taxCalculator,
-            IZipCodeService _zipCodeService)
+            IZipCodeService _zipCodeService,
+            string clientId = "Default")
         {
             ClientId = clientId;
 

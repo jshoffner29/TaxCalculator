@@ -1,0 +1,36 @@
+﻿.state-select-container {
+    display: inline-block;
+    margin: 20px 0;
+}
+
+.zip-code-container {
+    max-height: 400px;
+    overflow-y: scroll;
+    background: beige;
+}
+
+    .zip-code-container .section {
+        padding: 10px;
+        border: 1px solid white;
+    }
+
+.zip-code-selected-container {
+}
+
+.order-container {
+}
+    .order-container label {
+        display: inline-block;
+        width: 90px;
+        text-align: right;
+    }
+  
+    .order-container .order-items-container {
+        /*text-align: left;*/
+        background: beige;
+        margin: 2px;
+    }    
+        .order-container .order-items-container .submit-section {
+            display: inline-block;
+            margin: 20px 0;
+        }

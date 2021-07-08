@@ -27,13 +27,24 @@ namespace TaxCalculator.ClientApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.Add(new ServiceDescriptor(typeof(ITaxCalculatorService), new TaxCalculatorTaxJarService()));
-            services.Add(new ServiceDescriptor(typeof(IZipCodeService), new ZipCodeService()));
+            services.AddScoped<ITaxCalculatorService, TaxCalculatorTaxJarService>();
+            services.AddScoped<IZipCodeService, ZipCodeService>();
+            services.AddScoped<ITaxService, TaxService>();
+
+            //Added for session state
+            services.AddDistributedMemoryCache();
+
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(10);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseSession();   // support session state
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -56,7 +67,7 @@ namespace TaxCalculator.ClientApp
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
-            });
+            });            
         }
     }
 }

@@ -1,43 +1,66 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 using TaxCalculator.ClientApp.Models;
+using TaxCalculator.Contract;
 using TaxCalculator.Model;
 using TaxCalculator.Service;
-using TaxCalculator.SupportService;
+using Newtonsoft.Json;
 
 namespace TaxCalculator.ClientApp.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly ITaxService _taxService;
+        private TaxServiceViewModel _taxServiceViewModel;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, ITaxService taxService)
         {
             _logger = logger;
+            _taxService = taxService;
+            _taxServiceViewModel = new TaxServiceViewModel();
+
+            Initialize();            
         }
 
-        public IActionResult Index()
+        private void Initialize()
         {
-            var s = new TaxService("client 1", new TaxCalculatorTaxJarService(), new ZipCodeService());
+            TaxServiceViewModel.USStates = TaxService.USStates.Select(s => new USStateModel(s)).ToList();
+            TaxServiceViewModel.Categories = _taxService
+                                                .GetCategories()
+                                                .Select(s => new CategoryModel(s))
+                                                .ToDictionary(k => k.ProductTaxCode, v => v);            
+        }
 
-            var us = s.GetUSLocations("HI");
-            var result = s.GetTaxRateForLocation(new TaxByLocation { FromZipCode = "90404-3370" });
+        private void SetViewModel(TaxServiceViewModel model)
+        {
+            HttpContext.Session.SetObjectAsJson("model", model);
+        }
+
+        private TaxServiceViewModel GetViewModel()
+        {
+            return HttpContext.Session.GetObjectFromJson<TaxServiceViewModel>("model");
+        }
+
+        private void ExampleCallingTaxService()
+        {
+            var us = _taxService.GetUSLocations("HI");
+            var result = _taxService.GetTaxRateForLocation(new TaxByLocation { FromZipCode = "90404-3370" });
 
             var order = new Order
             {
-                USLocationFrom = new USLocation
+                USLocationFrom = new Model.USLocation
                 {
                     Street = "9500 Gilman Drive",
                     City = "La Jolla",
                     StateCode = "CA",
                     ZipCode = "92093"
                 },
-                USLocationTo = new USLocation
+                USLocationTo = new Model.USLocation
                 {
                     Street = "1335 E 103rd St",
                     City = "Los Angeles",
@@ -50,10 +73,75 @@ namespace TaxCalculator.ClientApp.Controllers
                 }
             };
 
-            var taxTotal = s.GetTaxForOrder(order);
-            return View();
+            var taxTotal = _taxService.GetTaxForOrder(order);
         }
 
+        public IActionResult Index()
+        {
+            SetViewModel(_taxServiceViewModel); // store tax service view model's initial state
+            var cacheModel = GetViewModel();    // Validate that the object caching is working right.
+
+            return View(cacheModel);
+        }
+        public IActionResult StateSelected(TaxServiceViewModel model)
+        {
+            
+            var cacheModel = GetViewModel();
+
+            cacheModel.StateCodeSelected = model.StateCodeSelected;
+            cacheModel.USSlocations = _taxService
+                                            .GetUSLocations(cacheModel.StateCodeSelected)
+                                            .Select(s => new USLocationModel(s))
+                                            .ToList();
+            SetViewModel(cacheModel);
+            return View("Index", cacheModel);
+        }
+
+        public IActionResult ZipCodeSelected(TaxServiceViewModel model, string zipCode)
+        {
+            var cacheModel = GetViewModel();
+            cacheModel.ZipCodeSelected = zipCode;
+
+            SetViewModel(cacheModel);
+
+            return View("Index", cacheModel);
+        }
+
+        public IActionResult TaxRateForLocation(TaxServiceViewModel model, string submit, string clear)
+        {
+            var cacheModel = GetViewModel();
+
+            if(!string.IsNullOrEmpty(clear))
+            {
+                cacheModel.ZipCodeSelected = string.Empty;
+            } else
+            {
+                cacheModel.StreetSelected = model.StreetSelected;
+                var taxByLocation = new TaxByLocation { FromStreet = cacheModel.StreetSelected, FromZipCode = cacheModel.ZipCodeSelected };
+                cacheModel.TaxRateForLocation = _taxService.GetTaxRateForLocation(taxByLocation);
+
+            }
+            return View("Index", cacheModel);
+        }
+        public IActionResult OrderItemSelected(TaxServiceViewModel model)
+        {
+            var cacheModel = GetViewModel();
+
+            cacheModel.OrderItemSelected = model.OrderItemSelected;
+            cacheModel.AddOrderItem();
+            SetViewModel(cacheModel);
+
+            return View("Index", cacheModel);
+        }
+        public IActionResult OrderTaxAmount()
+        {
+            var cacheModel = GetViewModel();
+
+            var order = cacheModel.GetOrder().MapTo();
+            cacheModel.OrderTaxAmount = _taxService.GetTaxForOrder(order);            
+
+            return View("Index", cacheModel);
+        }
         public IActionResult Privacy()
         {
             return View();

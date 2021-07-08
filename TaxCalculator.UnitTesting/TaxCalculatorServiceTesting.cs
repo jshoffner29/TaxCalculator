@@ -135,6 +135,177 @@ namespace TaxCalculator.UnitTesting
             Assert.IsTrue(results > 0, "Verify that a tax amount was received.");
         }
         [TestMethod]
+        [Description("Verify that a tax amount was received (dollar amt will change over time).")]
+        public void GetTaxForOrder_HappyPathNoFromStreetOrCity()
+        {
+            // Arrange
+            var order = new Order
+            {
+                USLocationFrom = new USLocation
+                {
+                    StateCode = "CA",
+                    ZipCode = "92093"
+                },
+                USLocationTo = new USLocation
+                {
+                    Street = "1335 E 103rd St",
+                    City = "Los Angeles",
+                    StateCode = "CA",
+                    ZipCode = "90002"
+                },
+                LineItems = new List<OrderLineItem>
+                {
+                    new OrderLineItem { Quanitity = 1, UnitPrice = 15 },
+                    new OrderLineItem { Quanitity = 2, UnitPrice = 7 }
+                }
+            };
+
+            // Act
+            var results = taxCalculatorTaxJar.GetTaxForOrder(order);
+
+            // Assert
+            Assert.IsNotNull(results);
+            Assert.IsTrue(results > 0, "Verify that a tax amount was received.");
+        }
+        [TestMethod]
+        public void GetTaxForOrder_ValidateFromMustBeInSameState()
+        {
+            // Arrange
+            var order = new Order
+            {
+                USLocationFrom = new USLocation
+                {
+                    StateCode = "HI",
+                    ZipCode = "96744"
+                },
+                USLocationTo = new USLocation
+                {
+                    Street = "1335 E 103rd St",
+                    City = "Los Angeles",
+                    StateCode = "CA",
+                    ZipCode = "90002"
+                },
+                LineItems = new List<OrderLineItem>
+                {
+                    new OrderLineItem { Quanitity = 1, UnitPrice = 15 },
+                    new OrderLineItem { Quanitity = 2, UnitPrice = 7 }
+                }
+            };
+
+            // Act
+            var results = taxCalculatorTaxJar.GetTaxForOrder(order);
+
+            // Assert
+            Assert.IsNotNull(results);
+            Assert.IsTrue(results == 0, "The tax amount could not be calculated.");
+        }
+        [TestMethod]
+        [Description("Verify that a tax amount was received (dollar amt will change over time).")]
+        public void GetTaxForOrder_ValidateTaxIsTheSameRegardlessOfFromLocation()
+        {
+            // Arrange
+            var order1 = new Order
+            {
+                USLocationFrom = new USLocation
+                {
+                    StateCode = "CA",
+                    ZipCode = "92093"
+                },
+                USLocationTo = new USLocation
+                {
+                    Street = "1335 E 103rd St",
+                    City = "Los Angeles",
+                    StateCode = "CA",
+                    ZipCode = "90002"
+                },
+                LineItems = new List<OrderLineItem>
+                {
+                    new OrderLineItem { Quanitity = 1, UnitPrice = 15 },
+                    new OrderLineItem { Quanitity = 2, UnitPrice = 7 }
+                }
+            };
+            var order2 = new Order
+            {
+                USLocationFrom = new USLocation
+                {
+                    StateCode = "CA",
+                    ZipCode = "91030"
+                },
+                USLocationTo = new USLocation
+                {
+                    Street = "1335 E 103rd St",
+                    City = "Los Angeles",
+                    StateCode = "CA",
+                    ZipCode = "90002"
+                },
+                LineItems = new List<OrderLineItem>
+                {
+                    new OrderLineItem { Quanitity = 1, UnitPrice = 15 },
+                    new OrderLineItem { Quanitity = 2, UnitPrice = 7 }
+                }
+            };
+            var order3 = new Order
+            {
+                USLocationFrom = new USLocation
+                {
+                    StateCode = "CA",
+                    ZipCode = "90744"
+                },
+                USLocationTo = new USLocation
+                {
+                    Street = "1335 E 103rd St",
+                    City = "Los Angeles",
+                    StateCode = "CA",
+                    ZipCode = "90002"
+                },
+                LineItems = new List<OrderLineItem>
+                {
+                    new OrderLineItem { Quanitity = 1, UnitPrice = 15 },
+                    new OrderLineItem { Quanitity = 2, UnitPrice = 7 }
+                }
+            };
+            var order4 = new Order
+            {
+                USLocationFrom = new USLocation
+                {
+                    StateCode = "CA",
+                    ZipCode = "90002"
+                },
+                USLocationTo = new USLocation
+                {
+                    Street = "1335 E 103rd St",
+                    City = "Los Angeles",
+                    StateCode = "CA",
+                    ZipCode = "90002"
+                },
+                LineItems = new List<OrderLineItem>
+                {
+                    new OrderLineItem { Quanitity = 1, UnitPrice = 15 },
+                    new OrderLineItem { Quanitity = 2, UnitPrice = 7 }
+                }
+            };
+
+            // Act
+            var results1 = taxCalculatorTaxJar.GetTaxForOrder(order1);
+            var results2 = taxCalculatorTaxJar.GetTaxForOrder(order2);
+            var results3 = taxCalculatorTaxJar.GetTaxForOrder(order3);
+            var results4 = taxCalculatorTaxJar.GetTaxForOrder(order4);
+
+            // Assert
+            Assert.IsNotNull(results1);
+            Assert.IsTrue(results1 > 0, "Verify that a tax amount was received.");
+            Assert.IsNotNull(results2);
+            Assert.IsTrue(results1 > 0, "Verify that a tax amount was received.");
+            Assert.IsNotNull(results3);
+            Assert.IsTrue(results1 > 0, "Verify that a tax amount was received.");
+            Assert.IsNotNull(results4);
+            Assert.IsTrue(results1 > 0, "Verify that a tax amount was received.");
+
+            Assert.AreEqual(results1, results2);
+            Assert.AreEqual(results1, results3);
+            Assert.AreEqual(results1, results4);
+        }
+        [TestMethod]
         public void GetTaxRateForLocation_FailsValidation()
         {
             // Arrange
