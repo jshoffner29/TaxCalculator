@@ -21,6 +21,10 @@ namespace TaxCalculator.ClientApp.Models
         public static Dictionary<string,CategoryModel> Categories { get; set; }
         public List<OrderItemModel> OrderItems { get; set; }
         public decimal OrderTaxAmount { get; set; }
+        public string SectionStateInstructions { get; set; }
+        public string SectionTaxForLocationInstructions{ get; set; }
+        public string SectionOrderInstructions { get; set; }
+        public string SectionOrderTaxInstructions { get; set; }
         public TaxServiceViewModel()
         {
             OrderItems = new List<OrderItemModel>();
@@ -37,6 +41,10 @@ namespace TaxCalculator.ClientApp.Models
 
             OrderItems.Add(OrderItemSelected);
         }
+        internal void DeleteOrderItem(int index)
+        {
+            OrderItems.RemoveAt(index);
+        }
         internal OrderModel GetOrder()
         {
             // use the same location for both 'TO' and 'FROM' locations
@@ -44,13 +52,14 @@ namespace TaxCalculator.ClientApp.Models
 
             return new OrderModel(usLocation, usLocation, OrderItems);
         }
+
+        #region Support Methods
         public string GetShortText(string text, int length = 10)
         {
             if (string.IsNullOrEmpty(text)) return string.Empty;
 
             return text.Substring(0, Math.Min(length, text.Length)) + "...";
         }
-        #region Support Methods
         public IEnumerable<SelectListItem> GetViewList<T>()
         {
             IEnumerable<SelectListItem> viewCollection = null;
@@ -70,9 +79,6 @@ namespace TaxCalculator.ClientApp.Models
                     Text = s.ProductTaxCode + "-" + s.Name.Substring(0,Math.Min(s.Name.Length,10)) + (s.Name.Length > 10 ? "...": ""),
                     Value = s.ProductTaxCode
                 });
-
-                // Set default values
-                OrderItemSelected = new OrderItemModel { Quantity = 0, UnitPrice = 0 };
             }
 
             if (viewCollection == null)

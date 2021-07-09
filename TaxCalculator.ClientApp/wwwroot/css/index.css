@@ -1,7 +1,18 @@
-﻿.state-select-container {
-    display: inline-block;
-    margin: 20px 0;
+﻿
+.tax-service-instructions {
+    margin: 10px 0;
+    border-bottom: 1px solid black;
+    border-radius: 20px;
 }
+
+    .tax-service-instructions .freeze-instructions-height {
+        height: 100px;
+    }
+
+    .state-select-container {
+        display: inline-block;
+        margin: 20px 0;
+    }
 
 .zip-code-container {
     max-height: 400px;
@@ -19,18 +30,32 @@
 
 .order-container {
 }
+
     .order-container label {
         display: inline-block;
         width: 90px;
         text-align: right;
     }
-  
+
     .order-container .order-items-container {
+        margin: 0 15px;
+    }
+    .order-container .order-items-container-row {
         /*text-align: left;*/
         background: beige;
         margin: 2px;
-    }    
-        .order-container .order-items-container .submit-section {
+    }
+
+        .order-container .order-items-container-row button {
+            color: white;
+            background-color: red;
+            border-radius: 5px;
+        }
+            .order-container .order-items-container-row button svg:hover {
+                margin: 0 2px 0 2px;
+            }
+
+        .order-container .order-items-container-row .submit-section {
             display: inline-block;
             margin: 20px 0;
         }
