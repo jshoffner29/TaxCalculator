@@ -25,7 +25,7 @@ namespace TaxCalculator.SupportService
             var results = zipCodeRepository.Search(x => x.StateAbbreviation.Equals(stateCode));
 
             if (results == null || !results.Any())
-                throw new ArgumentNullException("stateCode", $"Unable to retrieve zip code from the state abbreviation of {stateCode}");
+                throw new ArgumentNullException(nameof(stateCode), $"Unable to retrieve zip code from the state abbreviation of {stateCode}");
 
             return results.Select(s =>
                 new USLocation

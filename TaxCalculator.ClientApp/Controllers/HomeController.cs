@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,8 +7,6 @@ using TaxCalculator.ClientApp.Models;
 using TaxCalculator.Contract;
 using TaxCalculator.Model;
 using TaxCalculator.Service;
-using Newtonsoft.Json;
-using System;
 
 namespace TaxCalculator.ClientApp.Controllers
 {
@@ -92,28 +89,40 @@ namespace TaxCalculator.ClientApp.Controllers
 
             var cacheModel = GetViewModel();
 
-            cacheModel.StateCodeSelected = model.StateCodeSelected;
-            cacheModel.ZipCodeSelected = string.Empty;  // clear value, forcing user selection.
-            cacheModel.USSlocations = _taxService
-                                            .GetUSLocations(cacheModel.StateCodeSelected)
-                                            .Select(s => new USLocationModel(s))
-                                            .ToList();
-            cacheModel.TaxRateForLocation = -1;
-            cacheModel.OrderTaxAmount = -1;
+            cacheModel.SetStateCode(_taxService, model.StateCodeSelected);
 
             SetViewModel(cacheModel);
 
             return View("Index", cacheModel);
         }
 
+        public IActionResult ZipCodeFiltering(TaxServiceViewModel model, string clear)
+        {
+            var cacheModel = GetViewModel();
+
+            if(!string.IsNullOrEmpty(clear))
+            {
+                model.FilteredCityNameSelected = string.Empty;
+                model.FilteredZipCodeSelected = string.Empty;
+            }
+
+            cacheModel.SetFilteredUSLocations(model.FilteredCityNameSelected, model.FilteredZipCodeSelected);
+            
+            SetViewModel(cacheModel);
+
+            return View("Index", cacheModel);
+        }
+
+
         public IActionResult ZipCodeSelected(TaxServiceViewModel model, string zipCode)
         {
             var cacheModel = GetViewModel();
-            cacheModel.ZipCodeSelected = zipCode;
 
+            cacheModel.ZipCodeSelected = zipCode;
             cacheModel.TaxRateForLocation = -1; // reset tax rate value
 
             SetViewModel(cacheModel);
+
             return View("Index", cacheModel);
         }
 
@@ -169,7 +178,7 @@ namespace TaxCalculator.ClientApp.Controllers
             return View();
         }
 
-        public IActionResult Help()
+        public IActionResult Features()
         {
             return View();
         }

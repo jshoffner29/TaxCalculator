@@ -1,18 +1,70 @@
 ﻿
-.tax-service-instructions {
-    margin: 10px 0;
-    border-bottom: 1px solid black;
-    border-radius: 20px;
+.tax-service-title {
+    border-left: 5px solid green;
+    border-bottom: 5px solid green;
+    border-radius: 5px 0 5px 5px;
+    padding-left: 0;
+    padding-right: 0;
 }
 
-    .tax-service-instructions .freeze-instructions-height {
+    .tax-service-title h1 {
+        text-align: left;
+        font-weight: bold;
+        padding-left: 5px;
+        margin-bottom: 0;
+    }
+
+    .tax-service-title .second-level {
+        border-left: 5px solid orange;
+        border-bottom: 5px solid orange;
+        /*border-radius: 0 0 0 5px;*/
+    }
+
+    .tax-service-title .third-level {
+        border-left: 5px solid deepskyblue;
+        border-bottom: 5px solid deepskyblue;
+        border-radius: 0 0 0 5px;
+    }
+
+.tax-service-welcome {
+    display: flex;
+    justify-content: center;
+    margin: 15px 0 15px -300px;
+}
+
+    .tax-service-welcome .second-level {
+        border: 2px solid green;
+        display: flex;
+        justify-content: center;
+    }
+
+    .tax-service-welcome .third-level {
+        border: 2px solid orange;
+        display: flex;
+        justify-content: center;
+    }
+
+    .tax-service-welcome span {
+        font-style: italic;
+        text-align: center;
+        width: 300px;
+        padding: 10px;
+        font-weight: bold;
+        border: 2px solid deepskyblue;
+    }
+
+.tax-service-instructions-section {
+    margin: 10px 0;
+}
+
+    .tax-service-instructions-section .freeze-instructions-height {
         height: 100px;
     }
 
-    .state-select-container {
-        display: inline-block;
-        margin: 20px 0;
-    }
+.state-select-container {
+    display: inline-block;
+    margin: 20px 0;
+}
 
 .zip-code-container {
     max-height: 400px;
@@ -40,6 +92,7 @@
     .order-container .order-items-container {
         margin: 0 15px;
     }
+
     .order-container .order-items-container-row {
         /*text-align: left;*/
         background: beige;
@@ -51,6 +104,7 @@
             background-color: red;
             border-radius: 5px;
         }
+
             .order-container .order-items-container-row button svg:hover {
                 margin: 0 2px 0 2px;
             }

@@ -5,13 +5,33 @@
 @model TaxServiceViewModel
 
 <div class="text-center">
-    <h1 class="display-4">Tax Service</h1>
+    <div>
+        <div class="row">
+            <div class="col-9 tax-service-title">
+                <div class="second-level">
+                    <div class="third-level">
+                        <h1 class="display-4">Tax Service</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @if (string.IsNullOrEmpty(Model.StateCodeSelected))
+        {
+            <div class="tax-service-welcome">
+                <div class="second-level">
+                    <div class="third-level">
+                        <span>@Model.SectionAppInstructions</span>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 
     @* Select a State *@
     @using (Html.BeginForm("StateSelected", "Home", FormMethod.Post))
     {
         <div class="row">
-            <div class="col-4 tax-service-instructions">
+            <div class="col-4 tax-service-instructions-section">
                 <p>@Model.SectionStateInstructions</p>
             </div>
             <div class="col-8 state-select-container">
@@ -28,10 +48,18 @@
         // No ZipCode has been selected
         @if (string.IsNullOrEmpty(Model.ZipCodeSelected))
         {
+            @using (Html.BeginForm("ZipCodeFiltering", "Home", FormMethod.Post))
+            {
+                @Html.DropDownListFor(m => m.FilteredCityNameSelected, Model.GetViewList<USLocationModel>("FilteredCityNameSelected"), " -- Filter on city name -- ")
+                @Html.DropDownListFor(m => m.FilteredZipCodeSelected, Model.GetViewList<USLocationModel>("FilteredZipCodeSelected"), " -- Filter on zip code -- ")
+                <input type="submit" value="Search" />
+                <input type="submit" name="clear" value="Clear"  />
+            }
+
             @using (Html.BeginForm("ZipCodeSelected", "Home", FormMethod.Post))
             {
                 <div class="row zip-code-container">
-                    @foreach (var location in Model.USSlocations)
+                    @foreach (var location in Model.FilteredUSSLocations)
                     {
                         <div class="col-md-3 section">
                             <div>@location.City</div>
@@ -49,7 +77,7 @@
             @using (Html.BeginForm("TaxRateForLocation", "Home", FormMethod.Post))
             {
                 <div class="row">
-                    <div class="col-4 tax-service-instructions">
+                    <div class="col-4 tax-service-instructions-section">
                         <div class="freeze-instructions-height">
                             <p>@Model.SectionTaxForLocationInstructions</p>
                         </div>
@@ -83,7 +111,7 @@
         {
             <div class="order-container">
                 <div class="row">
-                    <div class="col-4 tax-service-instructions">
+                    <div class="col-4 tax-service-instructions-section">
                         <p>@Model.SectionOrderInstructions</p>
                     </div>
                     <div class="col-8">
@@ -114,7 +142,7 @@
                     <div class="row">
                         @if (Model.OrderItems.Any())
                         {
-                            <div class="col-4 tax-service-instructions">
+                            <div class="col-4 tax-service-instructions-section">
                                 <span>@Model.SectionOrderTaxInstructions</span>
                             </div>
                         }
