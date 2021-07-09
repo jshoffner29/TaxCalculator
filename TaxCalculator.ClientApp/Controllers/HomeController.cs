@@ -39,6 +39,7 @@ namespace TaxCalculator.ClientApp.Controllers
 
         private void SetViewModel(TaxServiceViewModel model)
         {
+            model.SetInstructions();
             HttpContext.Session.SetObjectAsJson("model", model);
         }
 
@@ -82,7 +83,7 @@ namespace TaxCalculator.ClientApp.Controllers
             SetViewModel(_taxServiceViewModel); // store tax service view model's initial state
             var cacheModel = GetViewModel();    // Validate that the object caching is working right.
 
-            cacheModel.SectionStateInstructions = "Start by selecting a state (from the drop-down) and click the search button.";
+            cacheModel.SetInstructions();
 
             return View(cacheModel);
         }
@@ -97,9 +98,10 @@ namespace TaxCalculator.ClientApp.Controllers
                                             .GetUSLocations(cacheModel.StateCodeSelected)
                                             .Select(s => new USLocationModel(s))
                                             .ToList();
+            cacheModel.TaxRateForLocation = -1;
+            cacheModel.OrderTaxAmount = -1;
 
-            cacheModel.SectionStateInstructions = "Now that a state has been selected, please select a zip code." + Environment.NewLine +
-                " Remember, you can always choose a different state.";
+            //cacheModel.SetInstructions();
 
             SetViewModel(cacheModel);
 
@@ -111,15 +113,9 @@ namespace TaxCalculator.ClientApp.Controllers
             var cacheModel = GetViewModel();
             cacheModel.ZipCodeSelected = zipCode;
 
-            cacheModel.SectionTaxForLocationInstructions = "Click 'View Tax Rate' to see the tax rate for this zip code or" +
-                " click 'View Zip Codes to make a different selection." + Environment.NewLine +
-                "Provide a street address for better accuracy.";
+            cacheModel.TaxRateForLocation = -1; // reset tax rate value
 
-            cacheModel.SectionOrderInstructions = "Create an order by selecting the item's category, quantity, and unit price." + Environment.NewLine +
-                    "Click 'Calculate' to view total tax amount for this order.";
-            cacheModel.SectionOrderTaxInstructions = "Hover over name and description to see full text.";
-
-            cacheModel.TaxRateForLocation = -1; // indicate the tax rate has not been retrieved
+            //cacheModel.SetInstructions();
 
             SetViewModel(cacheModel);
             return View("Index", cacheModel);
@@ -138,9 +134,8 @@ namespace TaxCalculator.ClientApp.Controllers
                 cacheModel.StreetSelected = model.StreetSelected;
                 var taxByLocation = new TaxByLocation { FromStreet = cacheModel.StreetSelected, FromZipCode = cacheModel.ZipCodeSelected };
                 cacheModel.TaxRateForLocation = _taxService.GetTaxRateForLocation(taxByLocation);
-
-                cacheModel.SectionTaxForLocationInstructions = $"The tax rate for zip code {cacheModel.ZipCodeSelected} is {cacheModel.TaxRateForLocation:P}.";
             }
+            //cacheModel.SetInstructions();
             SetViewModel(cacheModel);
             return View("Index", cacheModel);
         }
@@ -152,17 +147,14 @@ namespace TaxCalculator.ClientApp.Controllers
             {
                 cacheModel.OrderItemSelected = model.OrderItemSelected;
                 cacheModel.AddOrderItem();
-
             }
             else
             {
                 cacheModel.DeleteOrderItem(removeIndex);
             }
-            cacheModel.OrderTaxAmount = 0;  // reset order tax amt value.
+            cacheModel.OrderTaxAmount = -1;  // reset order tax amt value.
 
-            cacheModel.SectionOrderTaxInstructions = "Hover over name and description to see full text." + Environment.NewLine +
-                "NOTE: Previously selected order items are preserved" +
-                " even if the state and zip code is changed!";
+            //cacheModel.SetInstructions();
 
             SetViewModel(cacheModel);
 
@@ -175,7 +167,7 @@ namespace TaxCalculator.ClientApp.Controllers
             var order = cacheModel.GetOrder().MapTo();
             cacheModel.OrderTaxAmount = _taxService.GetTaxForOrder(order);
 
-            cacheModel.SectionOrderTaxInstructions += $" The total tax for this order is {cacheModel.OrderTaxAmount:C}." + Environment.NewLine;
+            //cacheModel.SetInstructions();
 
             SetViewModel(cacheModel);
             return View("Index", cacheModel);

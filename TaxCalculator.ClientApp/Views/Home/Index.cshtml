@@ -45,6 +45,7 @@
         }
         else // ZipCode has been selected
         {
+            <hr />
             @using (Html.BeginForm("TaxRateForLocation", "Home", FormMethod.Post))
             {
                 <div class="row">
@@ -58,17 +59,17 @@
                         <label>Street Address</label>
                         @Html.TextBoxFor(m => m.StreetSelected, new { @PlaceHolder = "Enter Street Address" }),
                         @Model.ZipCodeSelected
+
+                        <div>
+                            <input type="submit" name="submit" value="View Tax Rate" /> @*Get tax rate*@
+                            <input type="submit" name="clear" value="View Zip Codes" /> @*Clear zip code, allow view zip code list*@
+                        </div>
+                        @if (Model.TaxRateForLocation != -1)
+                        {
+                            <p><div>The tax for zip code @Model.ZipCodeSelected is: @Model.TaxRateForLocation.ToString("P")</div></p>
+                        }
                     </div>
                 </div>
-
-                <input type="submit" name="submit" value="View Tax Rate" /> // Get tax rate
-                <input type="submit" name="clear" value="View Zip Codes" /> // Clear zip code, allow view zip code list
-                @if (Model.TaxRateForLocation >= 0)
-                {
-                    <p>
-                        The tax for zip code @Model.ZipCodeSelected is: @Model.TaxRateForLocation.ToString("P")
-                    </p>
-                }
             }
             <hr />
         }
@@ -167,11 +168,15 @@
         @if (!string.IsNullOrEmpty(Model.ZipCodeSelected) && Model.OrderItems.Any())
         {
             <div class="submit-section">
-                <div>
-                    @*<label>Total Tax Amount for Order (Total Order is: @Model.OrderItems.Sum(s => s.Quantity * s.UnitPrice).ToString("C")):</label>*@
-                    <label>Total Tax Amount for this @Model.OrderItems.Sum(s => s.Quantity * s.UnitPrice).ToString("C") Order is:</label>
-                    <span>@Model.OrderTaxAmount.ToString("C")</span>
-                </div>
+                @if (Model.OrderTaxAmount != -1)
+                {
+                    <div>
+                        @*<label>Total Tax Amount for Order (Total Order is: @Model.OrderItems.Sum(s => s.Quantity * s.UnitPrice).ToString("C")):</label>*@
+                        <label>Total Tax Amount for this @Model.OrderItems.Sum(s => s.Quantity * s.UnitPrice).ToString("C") Order is:</label>
+                        <span>@Model.OrderTaxAmount.ToString("C")</span>
+                    </div>
+                }
+
                 <input type="submit" name="orderTax" value="Calculate" />
             </div>
         }
