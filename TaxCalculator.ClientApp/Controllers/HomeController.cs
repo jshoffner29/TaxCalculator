@@ -101,8 +101,6 @@ namespace TaxCalculator.ClientApp.Controllers
             cacheModel.TaxRateForLocation = -1;
             cacheModel.OrderTaxAmount = -1;
 
-            //cacheModel.SetInstructions();
-
             SetViewModel(cacheModel);
 
             return View("Index", cacheModel);
@@ -114,8 +112,6 @@ namespace TaxCalculator.ClientApp.Controllers
             cacheModel.ZipCodeSelected = zipCode;
 
             cacheModel.TaxRateForLocation = -1; // reset tax rate value
-
-            //cacheModel.SetInstructions();
 
             SetViewModel(cacheModel);
             return View("Index", cacheModel);
@@ -135,7 +131,7 @@ namespace TaxCalculator.ClientApp.Controllers
                 var taxByLocation = new TaxByLocation { FromStreet = cacheModel.StreetSelected, FromZipCode = cacheModel.ZipCodeSelected };
                 cacheModel.TaxRateForLocation = _taxService.GetTaxRateForLocation(taxByLocation);
             }
-            //cacheModel.SetInstructions();
+
             SetViewModel(cacheModel);
             return View("Index", cacheModel);
         }
@@ -154,8 +150,6 @@ namespace TaxCalculator.ClientApp.Controllers
             }
             cacheModel.OrderTaxAmount = -1;  // reset order tax amt value.
 
-            //cacheModel.SetInstructions();
-
             SetViewModel(cacheModel);
 
             return View("Index", cacheModel);
@@ -166,8 +160,6 @@ namespace TaxCalculator.ClientApp.Controllers
 
             var order = cacheModel.GetOrder().MapTo();
             cacheModel.OrderTaxAmount = _taxService.GetTaxForOrder(order);
-
-            //cacheModel.SetInstructions();
 
             SetViewModel(cacheModel);
             return View("Index", cacheModel);
