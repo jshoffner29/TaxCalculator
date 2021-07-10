@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TaxCalculator.Contract;
+using TaxCalculator.Model;
 
 namespace TaxCalculator.ClientApp.Models
 {
@@ -81,6 +82,24 @@ namespace TaxCalculator.ClientApp.Models
             }
             
         }
+        internal void ClearFilteredUSLocations()
+        {
+            FilteredCityNameSelected = string.Empty;
+            FilteredZipCodeSelected = string.Empty;
+        }
+        internal void SetZipCode(string zipCode)
+        {
+            ZipCodeSelected = zipCode;
+            TaxRateForLocation = -1;
+        }
+        internal void SetTaxRateForLocation(ITaxService taxService, string street)
+        {
+            if (string.IsNullOrEmpty(ZipCodeSelected)) return; // do nothing
+
+            StreetSelected = street;
+            var taxByLocation = new TaxByLocation { FromStreet = StreetSelected, FromZipCode = ZipCodeSelected };
+            TaxRateForLocation = taxService.GetTaxRateForLocation(taxByLocation);
+        }
         internal void AddOrderItem()
         {
             if (OrderItemSelected == null)
@@ -96,7 +115,7 @@ namespace TaxCalculator.ClientApp.Models
         {
             OrderItems.RemoveAt(index);
         }
-        internal OrderModel GetOrder()
+        private OrderModel GetOrder()
         {
             // use the same location for both 'TO' and 'FROM' locations
             var usLocation = new USLocationModel { StateCode = StateCodeSelected, ZipCode = ZipCodeSelected };
@@ -116,7 +135,8 @@ namespace TaxCalculator.ClientApp.Models
             }
             else
             {
-                SectionStateInstructions = "Now that a state has been selected, please select a zip code." + Environment.NewLine +
+                SectionStateInstructions = "Now that a state has been selected, please select a zip code. Use the filtering" +
+                    " to find the specific city name or zip code being searched." + Environment.NewLine +
                 " Remember, you can always choose a different state.";
             }
 
@@ -126,15 +146,15 @@ namespace TaxCalculator.ClientApp.Models
                 " click 'View Zip Codes to make a different selection." + Environment.NewLine +
                 "Provide a street address for better accuracy.";
 
-                SectionOrderInstructions = "Create an order by selecting the item's category, quantity, and unit price." + Environment.NewLine +
-                    "Click 'Calculate' to view total tax amount for this order.";
+                SectionOrderInstructions = "Use the 'Add Order Item' form to create as many items as desired." +
+                    " Hover over name and description to see full text.";
 
                 SectionOrderTaxInstructions = "Hover over name and description to see full text.";
 
                 if (OrderItems.Any())
                 {
-                    SectionOrderTaxInstructions += " NOTE: Previously selected order items are preserved" +
-                        " even if the state and zip code is changed!";
+                    SectionOrderInstructions += " NOTE: Previously selected order items are preserved" +
+                        " even if the state and zip code are changed!";
                 }
             }
 
@@ -147,7 +167,19 @@ namespace TaxCalculator.ClientApp.Models
                 SectionOrderTaxInstructions += $" The total tax for this order is {OrderTaxAmount:C}." + Environment.NewLine;
             }
         }
-
+        internal void SetModel(ITaxService taxService)
+        {
+            SetInstructions();
+            if (OrderItems.Any() && !string.IsNullOrEmpty(ZipCodeSelected))
+            {
+                var order = GetOrder().MapTo();
+                OrderTaxAmount = taxService.GetTaxForOrder(order);
+            }
+            else
+            {
+                OrderTaxAmount = -1; // indicate no tax calculated
+            }
+        }
         #region Support Methods
         public string GetShortText(string text, int length = 10)
         {

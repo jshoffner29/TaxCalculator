@@ -27,7 +27,7 @@
         }
     </div>
 
-    @* Select a State *@
+    <!-- Select a State -->
     @using (Html.BeginForm("StateSelected", "Home", FormMethod.Post))
     {
         <div class="row">
@@ -42,7 +42,7 @@
 
     }
 
-    @*Show Zip Codes for state*@
+    <!-- Show Zip Codes for state -->
     @if (Model.USSlocations != null && Model.USSlocations.Any())
     {
         // No ZipCode has been selected
@@ -53,7 +53,7 @@
                 @Html.DropDownListFor(m => m.FilteredCityNameSelected, Model.GetViewList<USLocationModel>("FilteredCityNameSelected"), " -- Filter on city name -- ")
                 @Html.DropDownListFor(m => m.FilteredZipCodeSelected, Model.GetViewList<USLocationModel>("FilteredZipCodeSelected"), " -- Filter on zip code -- ")
                 <input type="submit" value="Search" />
-                <input type="submit" name="clear" value="Clear"  />
+                <input type="submit" name="clear" value="Clear" />
             }
 
             @using (Html.BeginForm("ZipCodeSelected", "Home", FormMethod.Post))
@@ -83,7 +83,6 @@
                         </div>
                     </div>
                     <div class="col-8">
-                        @*@Html.LabelForModel("Street Address:")*@
                         <label>Street Address</label>
                         @Html.TextBoxFor(m => m.StreetSelected, new { @PlaceHolder = "Enter Street Address" }),
                         @Model.ZipCodeSelected
@@ -104,110 +103,91 @@
 
     }
 
-    @*Order Items*@
+    <!-- Order Items -->
     @if (!string.IsNullOrEmpty(Model.ZipCodeSelected))
     {
         @using (Html.BeginForm("OrderItemSelected", "Home", FormMethod.Post))
         {
             <div class="order-container">
                 <div class="row">
-                    <div class="col-4 tax-service-instructions-section">
-                        <p>@Model.SectionOrderInstructions</p>
+                    <div class="col-4">
+                        <span>@Model.SectionOrderInstructions</span>
                     </div>
                     <div class="col-8">
-                        <p>
-                            <div>
+                        <span class="title">Order Form:</span>
+                        <div class="row order-items-container">
+                            @{int i = 0;}
+                            @foreach (var item in @Model.OrderItems)
+                            {
+                                <div class="order-items-container-row col-6">
+                                    <div>
+                                        <label>Name:</label>
+                                        <span title="@item.Name">@Model.GetShortText(item.Name, 20)</span>
+                                    </div>
+                                    <div>
+                                        <label>Description:</label>
+                                        <span title="@item.Description">@Model.GetShortText(item.Description, 20)</span>
+                                    </div>
+                                    <div>
+                                        <label>Tax Code:</label>
+                                        <span>@item.ProductTaxCode</span>
+                                    </div>
+                                    <div>
+                                        <label>Quantity:</label>
+                                        <span>@item.Quantity</span>
+                                    </div>
+                                    <div>
+                                        <label>Price:</label>
+                                        <span>@item.UnitPrice.ToString("C")</span>
+                                    </div>
+                                    <div>
+                                        <label>Total Price:</label>
+                                        <span title="Quantity * Price">@Math.Round(item.Quantity * item.UnitPrice, 2).ToString("C")</span>
+                                    </div>
+                                    <button type="submit" name="removeIndex" value="@(i++)" title="Delete Item">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
+                                            <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            }
+                            <div class="order-form col-6">
+
+                                <div class="title">
+                                    <span>Add Order Item</span>
+                                </div>
                                 <div>
-                                    @Html.LabelForModel("Category")
-                                    @Html.DropDownListFor(m => m.OrderItemSelected.ProductTaxCode, Model.GetViewList<CategoryModel>(), " -- Please select an item -- ", new { @Title = "Tooltip here" })
+                                    @*@Html.LabelForModel("Category")*@
+                                    @Html.DropDownListFor(m => m.OrderItemSelected.ProductTaxCode, Model.GetViewList<CategoryModel>(), " -- Category Item -- ", new { @Title = "Tooltip here" })
                                 </div>
 
                                 <div>
                                     @Html.LabelForModel("Quantity")
-                                    @Html.TextBoxFor(m => m.OrderItemSelected.Quantity, new { @PlaceHolder = "Quantity (int)" })
+                                    @Html.TextBoxFor(m => m.OrderItemSelected.Quantity)
                                 </div>
                                 <div>
                                     @Html.LabelForModel("Price")
                                     @*@Html.TextBoxFor(m => m.OrderItemSelected.UnitPrice, new { @class = "required numeric", id = "OrderItemSelected", Value = String.Format("{0:C}", Model.OrderItemSelected) })*@
-                                    @Html.TextBoxFor(m => m.OrderItemSelected.UnitPrice, new { @PlaceHolder = "Price (decimal)" })
+                                    @Html.TextBoxFor(m => m.OrderItemSelected.UnitPrice)
                                 </div>
-                            </div>
 
-                            <input type="submit" name="add" value="Add Item" />
-                        </p>
-                    </div>
-                </div>
-                <p>
-                    <hr />
-                    <div class="row">
-                        @if (Model.OrderItems.Any())
-                        {
-                            <div class="col-4 tax-service-instructions-section">
-                                <span>@Model.SectionOrderTaxInstructions</span>
-                            </div>
-                        }
-                        <div class="col-8">
-                            <div class="row order-items-container">
-                                @{int i = 0;}
-                                @foreach (var item in @Model.OrderItems)
-                                {
-                                    <div class="order-items-container-row col-4">
-                                        <div>
-                                            <label>Name:</label>
-                                            <span title="@item.Name">@Model.GetShortText(item.Name)</span>
-                                        </div>
-                                        <div>
-                                            <label>Description:</label>
-                                            <span title="@item.Description">@Model.GetShortText(item.Description)</span>
-                                        </div>
-                                        <div>
-                                            <label>Tax Code:</label>
-                                            <span>@item.ProductTaxCode</span>
-                                        </div>
-                                        <div>
-                                            <label>Quantity:</label>
-                                            <span>@item.Quantity</span>
-                                        </div>
-                                        <div>
-                                            <label>Price:</label>
-                                            <span>@item.UnitPrice.ToString("C")</span>
-                                        </div>
-                                        <div>
-                                            <label>Total Price:</label>
-                                            <span title="Quantity * Price">@Math.Round(item.Quantity * item.UnitPrice, 2).ToString("C")</span>
-                                        </div>
-                                        <button type="submit" name="removeIndex" value="@(i++)" title="Delete Item">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
-                                                <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
-                                            </svg>
-                                        </button>
-                                    </div>
-                                }
+
+                                <input type="submit" name="add" value="Add Item" />
                             </div>
                         </div>
+                        <div class="submit-section">
+                            @if (Model.OrderTaxAmount != -1)
+                            {
+                                <div>
+                                    <label>Total Tax Amount for this @Model.OrderItems.Sum(s => s.Quantity * s.UnitPrice).ToString("C") Order is:</label>
+                                    <span>@Model.OrderTaxAmount.ToString("C")</span>
+                                </div>
+                            }
+                        </div>
                     </div>
-                </p>
+                </div>
             </div>
         }
     }
-    @using (Html.BeginForm("OrderTaxAmount", "Home", FormMethod.Post))
-    {
-        @if (!string.IsNullOrEmpty(Model.ZipCodeSelected) && Model.OrderItems.Any())
-        {
-            <div class="submit-section">
-                @if (Model.OrderTaxAmount != -1)
-                {
-                    <div>
-                        @*<label>Total Tax Amount for Order (Total Order is: @Model.OrderItems.Sum(s => s.Quantity * s.UnitPrice).ToString("C")):</label>*@
-                        <label>Total Tax Amount for this @Model.OrderItems.Sum(s => s.Quantity * s.UnitPrice).ToString("C") Order is:</label>
-                        <span>@Model.OrderTaxAmount.ToString("C")</span>
-                    </div>
-                }
-
-                <input type="submit" name="orderTax" value="Calculate" />
-            </div>
-        }
-    }
-
 </div>

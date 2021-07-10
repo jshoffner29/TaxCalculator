@@ -36,7 +36,7 @@ namespace TaxCalculator.ClientApp.Controllers
 
         private void SetViewModel(TaxServiceViewModel model)
         {
-            model.SetInstructions();
+            model.SetModel(_taxService);
             HttpContext.Session.SetObjectAsJson("model", model);
         }
 
@@ -102,8 +102,7 @@ namespace TaxCalculator.ClientApp.Controllers
 
             if(!string.IsNullOrEmpty(clear))
             {
-                model.FilteredCityNameSelected = string.Empty;
-                model.FilteredZipCodeSelected = string.Empty;
+                model.ClearFilteredUSLocations();
             }
 
             cacheModel.SetFilteredUSLocations(model.FilteredCityNameSelected, model.FilteredZipCodeSelected);
@@ -118,8 +117,7 @@ namespace TaxCalculator.ClientApp.Controllers
         {
             var cacheModel = GetViewModel();
 
-            cacheModel.ZipCodeSelected = zipCode;
-            cacheModel.TaxRateForLocation = -1; // reset tax rate value
+            cacheModel.SetZipCode(zipCode);
 
             SetViewModel(cacheModel);
 
@@ -136,9 +134,7 @@ namespace TaxCalculator.ClientApp.Controllers
             }
             else
             {
-                cacheModel.StreetSelected = model.StreetSelected;
-                var taxByLocation = new TaxByLocation { FromStreet = cacheModel.StreetSelected, FromZipCode = cacheModel.ZipCodeSelected };
-                cacheModel.TaxRateForLocation = _taxService.GetTaxRateForLocation(taxByLocation);
+                cacheModel.SetTaxRateForLocation(_taxService, model.StreetSelected);
             }
 
             SetViewModel(cacheModel);
@@ -156,28 +152,12 @@ namespace TaxCalculator.ClientApp.Controllers
             else
             {
                 cacheModel.DeleteOrderItem(removeIndex);
-            }
-            cacheModel.OrderTaxAmount = -1;  // reset order tax amt value.
+            }            
 
             SetViewModel(cacheModel);
 
             return View("Index", cacheModel);
         }
-        public IActionResult OrderTaxAmount()
-        {
-            var cacheModel = GetViewModel();
-
-            var order = cacheModel.GetOrder().MapTo();
-            cacheModel.OrderTaxAmount = _taxService.GetTaxForOrder(order);
-
-            SetViewModel(cacheModel);
-            return View("Index", cacheModel);
-        }
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
         public IActionResult Features()
         {
             return View();
