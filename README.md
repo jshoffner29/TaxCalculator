@@ -29,8 +29,8 @@ This product collects usage data\
 ![alt text](https://github.com/jshoffner29/TaxCalculator/blob/master/TaxCalculator.Service/Model%20Entities%20and%20Composition.PNG?raw=true)
 
 # User Stories
-![alt text](https://github.com/jshoffner29/TaxCalculator/blob/master/TaxCalculator.Service/Get%20Tax%20Rate%20for%20Zip%20Code%20-%20User%20Story.PNG?raw=true)
-![alt text](https://github.com/jshoffner29/TaxCalculator/blob/master/TaxCalculator.Service/Get%20Taxes%20for%20an%20Order%20–%20User%20Story.PNG?raw=true)
+![alt text](https://github.com/jshoffner29/TaxCalculator/blob/master/TaxCalculator.Service/Get%20Tax%20Rate%20for%20Zip%20Code%20-%20User%20Story.png?raw=true)
+![alt text](https://github.com/jshoffner29/TaxCalculator/blob/master/TaxCalculator.Service/Get%20Taxes%20for%20an%20Order%20–%20User%20Story.png?raw=true)
 
 # Future Releases
     • Use async for all Tax service calls
