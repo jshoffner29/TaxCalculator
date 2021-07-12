@@ -28,7 +28,7 @@ This product collects usage data\
 ![alt text](https://github.com/jshoffner29/TaxCalculator/blob/master/TaxCalculator.Service/Tax%20Service%20Composition.PNG?raw=true)
 ![alt text](https://github.com/jshoffner29/TaxCalculator/blob/master/TaxCalculator.Service/Model%20Entities%20and%20Composition.PNG?raw=true)
 
-# Future Release
+# Future Releases
     • Use async for all Tax service calls
     • Support for mobile devices (i.e. web responsive, native, chat box).
     • Consider choosing and using a js framework for this application (i.e. AngularJS, React, etc.)
