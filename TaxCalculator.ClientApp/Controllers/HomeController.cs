@@ -143,16 +143,20 @@ namespace TaxCalculator.ClientApp.Controllers
         public IActionResult OrderItemSelected(TaxServiceViewModel model, string add, int removeIndex)
         {
             var cacheModel = GetViewModel();
+            cacheModel.OrderItemSelected = model.OrderItemSelected;
 
-            if (!string.IsNullOrEmpty(add))
+            if (ModelState.IsValid)
             {
-                cacheModel.OrderItemSelected = model.OrderItemSelected;
-                cacheModel.AddOrderItem();
+                if (!string.IsNullOrEmpty(add))
+                {
+                    
+                    cacheModel.AddOrderItem();
+                }
+                else
+                {
+                    cacheModel.DeleteOrderItem(removeIndex);
+                }                
             }
-            else
-            {
-                cacheModel.DeleteOrderItem(removeIndex);
-            }            
 
             SetViewModel(cacheModel);
 

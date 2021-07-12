@@ -1,10 +1,12 @@
-﻿using TaxCalculator.Model;
+﻿using System.ComponentModel.DataAnnotations;
+using TaxCalculator.Model;
 
 namespace TaxCalculator.ClientApp.Models
 {
     public class CategoryModel
     {
         public string Name { get; set; }
+        [Required(AllowEmptyStrings =false,ErrorMessage = "Please select a category item")]
         public string ProductTaxCode { get; set; }
         public string Description { get; set; }
 

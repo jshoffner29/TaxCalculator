@@ -136,14 +136,14 @@ namespace TaxCalculator.ClientApp.Models
             else
             {
                 SectionStateInstructions = "Now that a state has been selected, please select a zip code. Use the filtering" +
-                    " to find the specific city name or zip code being searched." + Environment.NewLine +
+                    " to find the specific city name or zip code being searched." +
                 " Remember, you can always choose a different state.";
             }
 
             if (!string.IsNullOrEmpty(ZipCodeSelected))
             {
-                SectionTaxForLocationInstructions = "Click 'View Tax Rate' to see the tax rate for this zip code or" +
-                " click 'View Zip Codes to make a different selection." + Environment.NewLine +
+                SectionTaxForLocationInstructions = "Click 'View Tax Rate' to see the tax rate for this zip code." +
+                " Click 'View Zip Codes' to return to list of zip codes." +
                 "Provide a street address for better accuracy.";
 
                 SectionOrderInstructions = "Use the 'Add Order Item' form to create as many items as desired." +
@@ -164,7 +164,7 @@ namespace TaxCalculator.ClientApp.Models
             }
             if(OrderTaxAmount != -1)
             {
-                SectionOrderTaxInstructions += $" The total tax for this order is {OrderTaxAmount:C}." + Environment.NewLine;
+                SectionOrderTaxInstructions += $" The total tax for this order is {OrderTaxAmount:C}.";
             }
         }
         internal void SetModel(ITaxService taxService)

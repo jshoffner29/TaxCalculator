@@ -1,4 +1,5 @@
-﻿using TaxCalculator.Model;
+﻿using System.ComponentModel.DataAnnotations;
+using TaxCalculator.Model;
 
 namespace TaxCalculator.ClientApp.Models
 {
@@ -7,6 +8,8 @@ namespace TaxCalculator.ClientApp.Models
         public string Street { get; set; }
         public string City { get; set; }
         public string StateCode { get; set; }
+        [Required(ErrorMessage = "Zip is Required")]
+        [RegularExpression(@"^\d{5}(-\d{4})?$", ErrorMessage = "Invalid Zip")]
         public string ZipCode { get; set; }
         public string Country { get; set; }
         public double Lat { get; set; }

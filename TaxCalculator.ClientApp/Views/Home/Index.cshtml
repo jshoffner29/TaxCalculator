@@ -122,11 +122,11 @@
                                 <div class="order-items-container-row col-6">
                                     <div>
                                         <label>Name:</label>
-                                        <span title="@item.Name">@Model.GetShortText(item.Name, 20)</span>
+                                        <span title="@item.Name">@Model.GetShortText(item.Name, 25)</span>
                                     </div>
                                     <div>
                                         <label>Description:</label>
-                                        <span title="@item.Description">@Model.GetShortText(item.Description, 20)</span>
+                                        <span title="@item.Description">@Model.GetShortText(item.Description, 25)</span>
                                     </div>
                                     <div>
                                         <label>Tax Code:</label>
@@ -138,11 +138,11 @@
                                     </div>
                                     <div>
                                         <label>Price:</label>
-                                        <span>@item.UnitPrice.ToString("C")</span>
+                                        <span>@item.UnitPrice.GetValueOrDefault().ToString("C")</span>
                                     </div>
                                     <div>
                                         <label>Total Price:</label>
-                                        <span title="Quantity * Price">@Math.Round(item.Quantity * item.UnitPrice, 2).ToString("C")</span>
+                                        <span title="Quantity * Price">@Math.Round(item.Quantity.GetValueOrDefault() * item.UnitPrice.GetValueOrDefault(), 2).ToString("C")</span>
                                     </div>
                                     <button type="submit" name="removeIndex" value="@(i++)" title="Delete Item">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
@@ -152,35 +152,44 @@
                                     </button>
                                 </div>
                             }
-                            <div class="order-form col-6">
-
-                                <div class="title">
-                                    <span>Add Order Item</span>
-                                </div>
-                                <div>
-                                    @*@Html.LabelForModel("Category")*@
-                                    @Html.DropDownListFor(m => m.OrderItemSelected.ProductTaxCode, Model.GetViewList<CategoryModel>(), " -- Category Item -- ", new { @Title = "Tooltip here" })
-                                </div>
-
-                                <div>
-                                    @Html.LabelForModel("Quantity")
-                                    @Html.TextBoxFor(m => m.OrderItemSelected.Quantity)
-                                </div>
-                                <div>
-                                    @Html.LabelForModel("Price")
-                                    @*@Html.TextBoxFor(m => m.OrderItemSelected.UnitPrice, new { @class = "required numeric", id = "OrderItemSelected", Value = String.Format("{0:C}", Model.OrderItemSelected) })*@
-                                    @Html.TextBoxFor(m => m.OrderItemSelected.UnitPrice)
-                                </div>
-
-
-                                <input type="submit" name="add" value="Add Item" />
+                        <div class="order-form col-6">
+                            @*<div asp-validation-summary="ModelOnly" class="text-danger"></div>*@
+                            <div class="title">
+                                <span>Add Order Item</span>
                             </div>
+                            <div>
+                                @*@Html.LabelForModel("Category")*@
+                                @Html.DropDownListFor(m => m.OrderItemSelected.ProductTaxCode, Model.GetViewList<CategoryModel>(), " -- Category Item -- ", new { @Title = "Tooltip here" })
+                                <div>
+                                    <span asp-validation-for="@Model.OrderItemSelected.ProductTaxCode" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div>
+                                @Html.LabelForModel("Quantity")
+                                @Html.TextBoxFor(m => m.OrderItemSelected.Quantity, new { @Text = "> 0" })
+                                <div>
+                                    <span asp-validation-for="@Model.OrderItemSelected.Quantity" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div>
+                                @Html.LabelForModel("Price")
+                                @Html.TextBoxFor(m => m.OrderItemSelected.UnitPrice, new { @class = "required numeric", id = "OrderItemSelected", Value = String.Format("{0:C}", Model.OrderItemSelected) })
+                                @*@Html.TextBoxFor(m => m.OrderItemSelected.UnitPrice)*@
+                                <div>
+                                    <span asp-validation-for="@Model.OrderItemSelected.UnitPrice" class="text-danger"></span>
+                                </div>
+                            </div>
+
+
+                            <input type="submit" name="add" value="Add Item" />
+                        </div>
                         </div>
                         <div class="submit-section">
                             @if (Model.OrderTaxAmount != -1)
                             {
                                 <div>
-                                    <label>Total Tax Amount for this @Model.OrderItems.Sum(s => s.Quantity * s.UnitPrice).ToString("C") Order is:</label>
+                                    <label>Total Tax Amount for this @Model.OrderItems.Sum(s => s.Quantity.GetValueOrDefault() * s.UnitPrice.GetValueOrDefault()).ToString("C") Order is:</label>
                                     <span>@Model.OrderTaxAmount.ToString("C")</span>
                                 </div>
                             }
