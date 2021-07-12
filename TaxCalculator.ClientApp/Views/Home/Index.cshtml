@@ -141,7 +141,7 @@
                                         <span>@item.UnitPrice.GetValueOrDefault().ToString("C")</span>
                                     </div>
                                     <div>
-                                        <label>Total Price:</label>
+                                        <label>Total:</label>
                                         <span title="Quantity * Price">@Math.Round(item.Quantity.GetValueOrDefault() * item.UnitPrice.GetValueOrDefault(), 2).ToString("C")</span>
                                     </div>
                                     <button type="submit" name="removeIndex" value="@(i++)" title="Delete Item">
