@@ -30,6 +30,7 @@ This product collects usage data\
 
 # Future Release
     • Use async for all Tax service calls
-    • Support for mobile devices (i.e. web responsive, native, chat box)
+    • Support for mobile devices (i.e. web responsive, native, chat box).
+    • Consider choosing and using a js framework for this application (i.e. AngularJS, React, etc.)
     • Implement less style sheet for dynamic css control
     • Create a printable order form
