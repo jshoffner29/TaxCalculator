@@ -153,12 +153,11 @@
                                 </div>
                             }
                         <div class="order-form col-6">
-                            @*<div asp-validation-summary="ModelOnly" class="text-danger"></div>*@
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                             <div class="title">
                                 <span>Add Order Item</span>
                             </div>
                             <div>
-                                @*@Html.LabelForModel("Category")*@
                                 @Html.DropDownListFor(m => m.OrderItemSelected.ProductTaxCode, Model.GetViewList<CategoryModel>(), " -- Category Item -- ", new { @Title = "Tooltip here" })
                                 <div>
                                     <span asp-validation-for="@Model.OrderItemSelected.ProductTaxCode" class="text-danger"></span>

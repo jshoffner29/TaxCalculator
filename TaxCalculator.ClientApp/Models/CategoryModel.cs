@@ -6,6 +6,7 @@ namespace TaxCalculator.ClientApp.Models
     public class CategoryModel
     {
         public string Name { get; set; }
+
         [Required(AllowEmptyStrings =false,ErrorMessage = "Please select a category item")]
         public string ProductTaxCode { get; set; }
         public string Description { get; set; }
@@ -22,14 +23,5 @@ namespace TaxCalculator.ClientApp.Models
             ProductTaxCode = item.ProductTaxCode;
             Description = item.Description;
         }
-        //public Category MapTo()
-        //{
-        //    return new Category
-        //    {
-        //        Name = Name,
-        //        ProductTaxCode = ProductTaxCode,
-        //        Description = Description
-        //    };
-        //}
     }
 }
