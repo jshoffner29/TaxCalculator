@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TaxCalculator.Contract;
 using TaxCalculator.Model;
+using TaxCalculator.Service;
 using TaxCalculator.SupportService;
 
 namespace TaxCalculator.UnitTesting
@@ -20,6 +21,32 @@ namespace TaxCalculator.UnitTesting
             zipCodeService = new ZipCodeService();
         }
         #endregion
+        [TestMethod]
+        [Description("Validate the list of state name and state code associations")]
+        public void ValidateUSStatesNameAndCode()
+        {
+            // Arrange
+            var allStates = TaxService.USStates;
+            var errorStates = new List<USState>();
+
+            // Act
+            foreach (var state in allStates)
+            {
+                var targetState = state;
+
+                var lookupState = zipCodeService.GetUSLocations(state.StateCode).FirstOrDefault();
+
+                if (lookupState == null ||
+                    targetState.StateName != lookupState.StateName)
+                {
+                    errorStates.Add(targetState);
+                }
+            }
+
+            // Assert
+            Assert.IsNotNull(errorStates);
+            Assert.IsFalse(errorStates.Any(), $"There are {errorStates.Count} non-matching state names");
+        }
         [TestMethod]
         public void GetUSLocations_StateCodeNotFound()
         {

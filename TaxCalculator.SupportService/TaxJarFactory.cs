@@ -1,32 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using TaxCalculator.Contract;
 using TaxCalculator.Model;
 using Taxjar;
 
 namespace TaxCalculator.SupportService
 {
-    public abstract class TaxCalculatorTaxJarServiceBase : ITaxCalculatorService
+    public class TaxJarFactory : TaxCalculatorFactoryBase
     {
-        private TaxjarApi client;
-
-        public TaxCalculatorTaxJarServiceBase()
-        { }
-        public decimal GetTaxForOrder(Model.Order order)
+        #region ctor
+        private readonly TaxjarApi client;
+        private const string apikey = "5da2f821eee4035db4771edab942a4cc";
+        public TaxJarFactory()
         {
-            if (order == null)
-                throw new ArgumentNullException("The order is null.");
-
-            var taxForOrder = client.TaxForOrder(order.GetOrder());
-
-            if (taxForOrder == null)
-                throw new ArgumentNullException("Unable to retrieve tax for order");
-
-            return taxForOrder.AmountToCollect;
+            client = new TaxjarApi(apikey);
         }
+        #endregion
 
-        public decimal GetTaxRateForLocation(TaxByLocation taxByLocation)
+        public override decimal GetTaxRateForLocation(TaxByLocation taxByLocation)
         {
             if (taxByLocation == null)
                 throw new ArgumentNullException("Entity object is null");
@@ -55,7 +46,25 @@ namespace TaxCalculator.SupportService
 
             return rates.StateRate;
         }
-        public IEnumerable<Model.Category> GetCategories()
+
+        public override decimal GetTaxForOrder(Model.Order order)
+        {
+            if (order == null)
+                throw new ArgumentNullException("The order is null.");
+
+            var taxForOrder = client.TaxForOrder(order.GetOrder());
+
+            if (taxForOrder == null)
+                throw new ArgumentNullException("Unable to retrieve tax for order");
+
+            return taxForOrder.AmountToCollect;
+        }
+
+        /// <summary>
+        /// Get all order line item categories.
+        /// </summary>
+        /// <returns></returns>
+        public override IEnumerable<Model.Category> GetCategories()
         {
             return client.Categories()
                     .Select(s => new Model.Category
@@ -65,12 +74,5 @@ namespace TaxCalculator.SupportService
                         Description = s.Description
                     });
         }
-
-        #region Support Methods
-        public virtual void Initialize(string apikey)
-        {
-            client = new TaxjarApi(apikey);
-        }
-        #endregion
     }
 }

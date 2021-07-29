@@ -13,13 +13,15 @@ namespace TaxCalculator.ClientApp.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly ITaxService _taxService;
+        private readonly ITaxService taxService;
+        private readonly IZipCodeService zipCodeService;
         private TaxServiceViewModel _taxServiceViewModel;
 
-        public HomeController(ILogger<HomeController> logger, ITaxService taxService)
+        public HomeController(ILogger<HomeController> logger, ITaxService taxService, IZipCodeService zipCodeService)
         {
             _logger = logger;
-            _taxService = taxService;
+            this.taxService = taxService;
+            this.zipCodeService = zipCodeService;
             _taxServiceViewModel = new TaxServiceViewModel();
 
             Initialize();
@@ -28,7 +30,7 @@ namespace TaxCalculator.ClientApp.Controllers
         private void Initialize()
         {
             TaxServiceViewModel.USStates = TaxService.USStates.Select(s => new USStateModel(s)).ToList();
-            TaxServiceViewModel.Categories = _taxService
+            TaxServiceViewModel.Categories = taxService
                                                 .GetCategories()
                                                 .Select(s => new CategoryModel(s))
                                                 .ToDictionary(k => k.ProductTaxCode, v => v);
@@ -36,7 +38,7 @@ namespace TaxCalculator.ClientApp.Controllers
 
         private void SetViewModel(TaxServiceViewModel model)
         {
-            model.SetModel(_taxService);
+            model.SetModel(taxService);
             HttpContext.Session.SetObjectAsJson("model", model);
         }
 
@@ -45,35 +47,35 @@ namespace TaxCalculator.ClientApp.Controllers
             return HttpContext.Session.GetObjectFromJson<TaxServiceViewModel>("model");
         }
 
-        private void ExampleCallingTaxService()
-        {
-            var us = _taxService.GetUSLocations("HI");
-            var result = _taxService.GetTaxRateForLocation(new TaxByLocation { FromZipCode = "90404-3370" });
+        //private void ExampleCallingTaxService()
+        //{
+        //    var us = _zipCodeService.GetUSLocations("HI");
+        //    var result = _taxService.GetTaxRateForLocation(new TaxByLocation { FromZipCode = "90404-3370" });
 
-            var order = new Order
-            {
-                USLocationFrom = new Model.USLocation
-                {
-                    Street = "9500 Gilman Drive",
-                    City = "La Jolla",
-                    StateCode = "CA",
-                    ZipCode = "92093"
-                },
-                USLocationTo = new Model.USLocation
-                {
-                    Street = "1335 E 103rd St",
-                    City = "Los Angeles",
-                    StateCode = "CA",
-                    ZipCode = "90002"
-                },
-                LineItems = new List<OrderLineItem>
-                {
-                    new OrderLineItem { Quanitity = 2, UnitPrice = 7 }
-                }
-            };
+        //    var order = new Order
+        //    {
+        //        USLocationFrom = new Model.USLocation
+        //        {
+        //            Street = "9500 Gilman Drive",
+        //            City = "La Jolla",
+        //            StateCode = "CA",
+        //            ZipCode = "92093"
+        //        },
+        //        USLocationTo = new Model.USLocation
+        //        {
+        //            Street = "1335 E 103rd St",
+        //            City = "Los Angeles",
+        //            StateCode = "CA",
+        //            ZipCode = "90002"
+        //        },
+        //        LineItems = new List<OrderLineItem>
+        //        {
+        //            new OrderLineItem { Quanitity = 2, UnitPrice = 7 }
+        //        }
+        //    };
 
-            var taxTotal = _taxService.GetTaxForOrder(order);
-        }
+        //    var taxTotal = _taxService.GetTaxForOrder(order);
+        //}
 
         public IActionResult Index()
         {
@@ -86,10 +88,9 @@ namespace TaxCalculator.ClientApp.Controllers
         }
         public IActionResult StateSelected(TaxServiceViewModel model)
         {
-
             var cacheModel = GetViewModel();
 
-            cacheModel.SetStateCode(_taxService, model.StateCodeSelected);
+            cacheModel.SetStateCode(zipCodeService, model.StateCodeSelected);
 
             SetViewModel(cacheModel);
 
@@ -134,7 +135,7 @@ namespace TaxCalculator.ClientApp.Controllers
             }
             else
             {
-                cacheModel.SetTaxRateForLocation(_taxService, model.StreetSelected);
+                cacheModel.SetTaxRateForLocation(taxService, model.StreetSelected);
             }
 
             SetViewModel(cacheModel);

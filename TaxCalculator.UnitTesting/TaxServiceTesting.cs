@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
 using TaxCalculator.Contract;
 using TaxCalculator.Service;
 
@@ -9,65 +8,17 @@ namespace TaxCalculator.UnitTesting
     [TestClass]
     public class TaxServiceTesting
     {
-        private const string activeClientId = "ActiveClient";
         private ITaxService taxServiceClient;
-        private Mock<ITaxCalculatorService> taxCalculatorService;
-        private Mock<IZipCodeService> zipCodeService;
+        private Mock<ITaxCalculatorFactory> taxCalculatorService;
 
         #region environment setup
         [TestInitialize]
         public void TestInitialize()
         {
-            taxCalculatorService = new Mock<ITaxCalculatorService>();
-            zipCodeService = new Mock<IZipCodeService>();
+            taxCalculatorService = new Mock<ITaxCalculatorFactory>();
 
-            taxServiceClient = new TaxService(taxCalculatorService.Object, zipCodeService.Object, activeClientId);
+            taxServiceClient = new TaxService(taxCalculatorService.Object);
         }
         #endregion
-
-        [TestMethod]
-        public void TaxService_ValidateInitialization()
-        {
-            // Arrange - no variables
-
-            // Act - act happened at test initialization
-
-            // Assert
-            Assert.IsNotNull(taxServiceClient);
-            Assert.IsNotNull(taxServiceClient.ClientId);
-
-            taxCalculatorService.Verify(v => v.Initialize(It.IsAny<string>()), Times.Once);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void InitializeTaxCalculator_UnSupportedClient()
-        {
-            // Arrange
-            const string clientId = "UnSupportedClient";
-            var taxCalculatorService = new Mock<ITaxCalculatorService>();
-            var zipCodeService = new Mock<IZipCodeService>();
-
-            // Act
-            new TaxService(taxCalculatorService.Object, zipCodeService.Object, clientId);
-
-            // Assert - no assertion, should throw exception            
-        }
-
-        [TestMethod]
-        public void InitializeTaxCalculator_DefaultClient()
-        {
-            // Arrange
-            const string clientId = "ClientNotSetUp";
-            var taxCalculatorService = new Mock<ITaxCalculatorService>();
-            var zipCodeService = new Mock<IZipCodeService>();
-
-            // Act
-            var results = new TaxService(taxCalculatorService.Object, zipCodeService.Object, clientId);
-
-            // Assert
-            taxCalculatorService.Verify(v => v.Initialize(It.IsAny<string>()), Times.Once);
-            Assert.IsNotNull(results);
-        }
     }
 }

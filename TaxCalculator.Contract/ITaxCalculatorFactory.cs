@@ -6,13 +6,8 @@ namespace TaxCalculator.Contract
     /// Only supports Tax by Location
     /// Calculate the taxes for the order
     /// </summary>
-    public interface ITaxCalculatorService
+    public interface ITaxCalculatorFactory
     {
-        /// <summary>
-        /// Initialize the service.
-        /// </summary>
-        /// <param name="clientId">Application's client</param>
-        void Initialize(string clientId);
         /// <summary>
         /// Get state sales tax rate for given location
         /// </summary>
@@ -26,10 +21,11 @@ namespace TaxCalculator.Contract
         /// <param name="order">Order entity</param>
         /// <returns></returns>
         decimal GetTaxForOrder(Order order);
+
         /// <summary>
         /// Get all order line item categories.
         /// </summary>
         /// <returns></returns>
-        IEnumerable<Category> GetCategories();
+        IEnumerable<Model.Category> GetCategories();
     }
 }

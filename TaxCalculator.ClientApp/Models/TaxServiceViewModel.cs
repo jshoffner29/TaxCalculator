@@ -29,6 +29,7 @@ namespace TaxCalculator.ClientApp.Models
         public decimal OrderTaxAmount { get; set; }
 
         #region Instructions
+        //public InstructionsModel InstructionsModel { get; private set; }
         public string SectionAppInstructions { get; } = "Welcome to the Tax Service application! " +
             "This application let's the user view the tax rate for a given zip code and view the total tax amount for an order the user can create an order!";
         public string SectionStateInstructions { get; set; }
@@ -40,11 +41,11 @@ namespace TaxCalculator.ClientApp.Models
         {
             OrderItems = new List<OrderItemModel>();
         }
-        internal void SetStateCode(ITaxService taxService, string stateCode)
+        internal void SetStateCode(IZipCodeService zipCodeService, string stateCode)
         {
             StateCodeSelected = stateCode;
             ZipCodeSelected = string.Empty;
-            USSlocations = taxService
+            USSlocations = zipCodeService
                                         .GetUSLocations(StateCodeSelected)
                                         .Select(s => new USLocationModel(s))
                                         .ToList();
@@ -52,7 +53,7 @@ namespace TaxCalculator.ClientApp.Models
             FilteredUSSLocations = new List<USLocationModel>(USSlocations);
 
             TaxRateForLocation = -1;
-            OrderTaxAmount = -1;
+            OrderTaxAmount = -1;           
         }
         internal void SetFilteredUSLocations(string cityName, string zipCode)
         {

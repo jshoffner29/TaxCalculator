@@ -10,17 +10,15 @@ using TaxCalculator.SupportService;
 namespace TaxCalculator.UnitTesting
 {
     [TestClass]
-    public class TaxCalculatorServiceTesting
+    public class TaxJarFactoryTesting
     {
-        private ITaxCalculatorService taxCalculatorTaxJar;
-        private string apikey = "5da2f821eee4035db4771edab942a4cc";
+        private ITaxCalculatorFactory taxCalculatorTaxJar;
 
         #region environment setup
         [TestInitialize]
         public void TestInitialize()
         {
-            taxCalculatorTaxJar = new TaxCalculatorTaxJarService();
-            taxCalculatorTaxJar.Initialize(apikey);
+            taxCalculatorTaxJar = new TaxJarFactory();
         }
         #endregion
         [TestMethod]

@@ -1,13 +1,9 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using TaxCalculator.Contract;
 using TaxCalculator.Service;
 using TaxCalculator.SupportService;
@@ -27,7 +23,7 @@ namespace TaxCalculator.ClientApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddScoped<ITaxCalculatorService, TaxCalculatorTaxJarService>();
+            services.AddScoped<ITaxCalculatorFactory, TaxJarFactory>();            
             services.AddScoped<IZipCodeService, ZipCodeService>();
             services.AddScoped<ITaxService, TaxService>();
 
