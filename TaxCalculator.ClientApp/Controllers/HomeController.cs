@@ -47,36 +47,6 @@ namespace TaxCalculator.ClientApp.Controllers
             return HttpContext.Session.GetObjectFromJson<TaxServiceViewModel>("model");
         }
 
-        //private void ExampleCallingTaxService()
-        //{
-        //    var us = _zipCodeService.GetUSLocations("HI");
-        //    var result = _taxService.GetTaxRateForLocation(new TaxByLocation { FromZipCode = "90404-3370" });
-
-        //    var order = new Order
-        //    {
-        //        USLocationFrom = new Model.USLocation
-        //        {
-        //            Street = "9500 Gilman Drive",
-        //            City = "La Jolla",
-        //            StateCode = "CA",
-        //            ZipCode = "92093"
-        //        },
-        //        USLocationTo = new Model.USLocation
-        //        {
-        //            Street = "1335 E 103rd St",
-        //            City = "Los Angeles",
-        //            StateCode = "CA",
-        //            ZipCode = "90002"
-        //        },
-        //        LineItems = new List<OrderLineItem>
-        //        {
-        //            new OrderLineItem { Quanitity = 2, UnitPrice = 7 }
-        //        }
-        //    };
-
-        //    var taxTotal = _taxService.GetTaxForOrder(order);
-        //}
-
         public IActionResult Index()
         {
             SetViewModel(_taxServiceViewModel); // store tax service view model's initial state

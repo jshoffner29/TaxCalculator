@@ -20,7 +20,7 @@
             <div class="tax-service-welcome">
                 <div class="second-level">
                     <div class="third-level">
-                        <span>@Model.SectionAppInstructions</span>
+                        <span>@Model.InstructionalMessageContext.Strategy.SectionAppInstructions</span>
                     </div>
                 </div>
             </div>
@@ -32,7 +32,7 @@
     {
         <div class="row">
             <div class="col-4 tax-service-instructions-section">
-                <p>@Model.SectionStateInstructions</p>
+                <p>@Model.InstructionalMessageContext.Strategy.SectionStateInstructions</p>
             </div>
             <div class="col-8 state-select-container">
                 @Html.DropDownListFor(m => m.StateCodeSelected, Model.GetViewList<USStateModel>(), " -- Please select a state -- ")
@@ -79,7 +79,7 @@
                 <div class="row">
                     <div class="col-4 tax-service-instructions-section">
                         <div class="freeze-instructions-height">
-                            <p>@Model.SectionTaxForLocationInstructions</p>
+                            <p>@Model.InstructionalMessageContext.Strategy.SectionTaxForLocationInstructions</p>
                         </div>
                     </div>
                     <div class="col-8">
@@ -111,7 +111,7 @@
             <div class="order-container">
                 <div class="row">
                     <div class="col-4">
-                        <span>@Model.SectionOrderInstructions</span>
+                        <span>@Model.InstructionalMessageContext.Strategy.SectionOrderInstructions</span>
                     </div>
                     <div class="col-8">
                         <span class="title">Order Form:</span>
@@ -158,7 +158,7 @@
                                 <span>Add Order Item</span>
                             </div>
                             <div>
-                                @Html.DropDownListFor(m => m.OrderItemSelected.ProductTaxCode, Model.GetViewList<CategoryModel>(), " -- Category Item -- ", new { @Title = "Tooltip here" })
+                                @Html.DropDownListFor(m => m.OrderItemSelected.ProductTaxCode, Model.GetViewList<CategoryModel>(), " -- Category Item -- ")
                                 <div>
                                     <span asp-validation-for="@Model.OrderItemSelected.ProductTaxCode" class="text-danger"></span>
                                 </div>
@@ -174,7 +174,6 @@
                             <div>
                                 @Html.LabelForModel("Price")
                                 @Html.TextBoxFor(m => m.OrderItemSelected.UnitPrice, new { @class = "required numeric", id = "OrderItemSelected", Value = String.Format("{0:C}", Model.OrderItemSelected) })
-                                @*@Html.TextBoxFor(m => m.OrderItemSelected.UnitPrice)*@
                                 <div>
                                     <span asp-validation-for="@Model.OrderItemSelected.UnitPrice" class="text-danger"></span>
                                 </div>

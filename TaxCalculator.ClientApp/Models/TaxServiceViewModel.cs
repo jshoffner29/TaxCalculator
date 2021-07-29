@@ -13,8 +13,6 @@ namespace TaxCalculator.ClientApp.Models
         public string ZipCodeSelected { get; set; }
         public string StreetSelected { get; set; }        
         public decimal TaxRateForLocation { get; set; }
-        public bool TaxRateForLocationWasSet { get; set; }
-
         public static List<USStateModel> USStates { get; set; }
         public List<USLocationModel> USSlocations { get; set; }
         public string FilteredCityNameSelected { get; set; }
@@ -29,17 +27,12 @@ namespace TaxCalculator.ClientApp.Models
         public decimal OrderTaxAmount { get; set; }
 
         #region Instructions
-        //public InstructionsModel InstructionsModel { get; private set; }
-        public string SectionAppInstructions { get; } = "Welcome to the Tax Service application! " +
-            "This application let's the user view the tax rate for a given zip code and view the total tax amount for an order the user can create an order!";
-        public string SectionStateInstructions { get; set; }
-        public string SectionTaxForLocationInstructions { get; set; }
-        public string SectionOrderInstructions { get; set; }
-        public string SectionOrderTaxInstructions { get; set; }
+        public InstructionalMessageContext InstructionalMessageContext { get; private set; }
         #endregion
         public TaxServiceViewModel()
         {
             OrderItems = new List<OrderItemModel>();
+            InstructionalMessageContext = new InstructionalMessageContext(new DefaultMessageStrategy());
         }
         internal void SetStateCode(IZipCodeService zipCodeService, string stateCode)
         {
@@ -130,43 +123,30 @@ namespace TaxCalculator.ClientApp.Models
         }
         internal void SetInstructions()
         {
-            if (string.IsNullOrEmpty(StateCodeSelected))
-            {
-                SectionStateInstructions = "Start by selecting a state (from the drop-down) and click the search button.";
-            }
-            else
-            {
-                SectionStateInstructions = "Now that a state has been selected, please select a zip code. Use the filtering" +
-                    " to find the specific city name or zip code being searched." +
-                " Remember, you can always choose a different state.";
-            }
+            InstructionalMessageContext.Strategy = string.IsNullOrEmpty(StateCodeSelected)
+                ? new DefaultMessageStrategy()
+                : new USStateSetMessageStrategy();
 
+            
             if (!string.IsNullOrEmpty(ZipCodeSelected))
             {
-                SectionTaxForLocationInstructions = "Click 'View Tax Rate' to see the tax rate for this zip code." +
-                " Click 'View Zip Codes' to return to list of zip codes." +
-                "Provide a street address for better accuracy.";
-
-                SectionOrderInstructions = "Use the 'Add Order Item' form to create as many items as desired." +
-                    " Hover over name and description to see full text.";
-
-                SectionOrderTaxInstructions = "Hover over name and description to see full text.";
+                InstructionalMessageContext.Strategy = new ZipCodeSetMessageStrategy();
 
                 if (OrderItems.Any())
                 {
-                    SectionOrderInstructions += " NOTE: Previously selected order items are preserved" +
-                        " even if the state and zip code are changed!";
+                    InstructionalMessageContext.Strategy = new OrderItemSetMessageStrategy();
                 }
             }
 
             if(TaxRateForLocation != -1)
             {
-                SectionTaxForLocationInstructions = $"The tax rate for zip code {ZipCodeSelected} is {TaxRateForLocation:P}.";
+                InstructionalMessageContext.Strategy = new TaxForLocationMessageStrategy
+                {
+                    ZipCode = ZipCodeSelected,
+                    TaxRateForLocation = TaxRateForLocation
+                };
             }
-            if(OrderTaxAmount != -1)
-            {
-                SectionOrderTaxInstructions += $" The total tax for this order is {OrderTaxAmount:C}.";
-            }
+            InstructionalMessageContext.Update();
         }
         internal void SetModel(ITaxService taxService)
         {
