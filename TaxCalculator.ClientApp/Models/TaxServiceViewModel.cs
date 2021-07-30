@@ -4,31 +4,34 @@ using System.Collections.Generic;
 using System.Linq;
 using TaxCalculator.Contract;
 using TaxCalculator.Model;
+using TaxCalculator.Service;
 
 namespace TaxCalculator.ClientApp.Models
 {
     public class TaxServiceViewModel
     {
-        public string StateCodeSelected { get; set; }
-        public string ZipCodeSelected { get; set; }
-        public string StreetSelected { get; set; }        
-        public decimal TaxRateForLocation { get; set; }
+        #region Look up values
         public static List<USStateModel> USStates { get; set; }
-        public List<USLocationModel> USSlocations { get; set; }
-        public string FilteredCityNameSelected { get; set; }
-        public string FilteredZipCodeSelected { get; set; }
-        public List<USLocationModel> FilteredUSSLocations { get; set; }
         /// <summary>
         /// Indexed collection (index is product tax code)
         /// </summary>
         public static Dictionary<string, CategoryModel> Categories { get; set; }
+        #endregion Look up values
+
+        public string StateCodeSelected { get; set; }
+        public string ZipCodeSelected { get; set; }
+        public string StreetSelected { get; set; }        
+        public decimal TaxRateForLocation { get; set; }
+        public List<USLocationModel> USSlocations { get; set; }
+        public string FilteredCityNameSelected { get; set; }
+        public string FilteredZipCodeSelected { get; set; }
+        public List<USLocationModel> FilteredUSSLocations { get; set; }
         public OrderItemModel OrderItemSelected { get; set; }
         public List<OrderItemModel> OrderItems { get; set; }
         public decimal OrderTaxAmount { get; set; }
 
-        #region Instructions
         public InstructionalMessageContext InstructionalMessageContext { get; private set; }
-        #endregion
+        
         public TaxServiceViewModel()
         {
             OrderItems = new List<OrderItemModel>();
@@ -36,6 +39,20 @@ namespace TaxCalculator.ClientApp.Models
 
             TaxRateForLocation = -1;
             OrderTaxAmount = -1;
+        }
+        internal static void SetLookUpValues(ITaxService taxService)
+        {
+            if(USStates == null)
+            {
+                USStates = TaxService.USStates.Select(s => new USStateModel(s)).ToList();
+            }
+            if(Categories == null)
+            {
+                Categories = taxService
+                                .GetCategories()
+                                .Select(s => new CategoryModel(s))
+                                .ToDictionary(k => k.ProductTaxCode, v => v);
+            }
         }
         internal void SetStateCode(IZipCodeService zipCodeService, string stateCode)
         {
@@ -76,8 +93,7 @@ namespace TaxCalculator.ClientApp.Models
             {
                 FilteredCityNameSelected = cityName;
                 FilteredZipCodeSelected = string.Empty;
-            }
-            
+            }            
         }
         internal void ClearFilteredUSLocations()
         {

@@ -1,12 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using TaxCalculator.ClientApp.Models;
 using TaxCalculator.Contract;
-using TaxCalculator.Model;
-using TaxCalculator.Service;
 
 namespace TaxCalculator.ClientApp.Controllers
 {
@@ -23,17 +19,7 @@ namespace TaxCalculator.ClientApp.Controllers
             this.taxService = taxService;
             this.zipCodeService = zipCodeService;
             _taxServiceViewModel = new TaxServiceViewModel();
-
-            Initialize();
-        }
-
-        private void Initialize()
-        {
-            TaxServiceViewModel.USStates = TaxService.USStates.Select(s => new USStateModel(s)).ToList();
-            TaxServiceViewModel.Categories = taxService
-                                                .GetCategories()
-                                                .Select(s => new CategoryModel(s))
-                                                .ToDictionary(k => k.ProductTaxCode, v => v);
+            TaxServiceViewModel.SetLookUpValues(taxService);
         }
 
         private void SetViewModel(TaxServiceViewModel model)
@@ -67,11 +53,11 @@ namespace TaxCalculator.ClientApp.Controllers
             return View("Index", cacheModel);
         }
 
-        public IActionResult ZipCodeFiltering(TaxServiceViewModel model, string clear)
+        public IActionResult ZipCodeFiltering(TaxServiceViewModel model, bool clear)
         {
             var cacheModel = GetViewModel();
 
-            if(!string.IsNullOrEmpty(clear))
+            if(clear)
             {
                 model.ClearFilteredUSLocations();
             }
@@ -95,11 +81,11 @@ namespace TaxCalculator.ClientApp.Controllers
             return View("Index", cacheModel);
         }
 
-        public IActionResult TaxRateForLocation(TaxServiceViewModel model, string submit, string clear)
+        public IActionResult TaxRateForLocation(TaxServiceViewModel model, bool viewZipCode)
         {
             var cacheModel = GetViewModel();
 
-            if (!string.IsNullOrEmpty(clear))
+            if (viewZipCode)
             {
                 cacheModel.ZipCodeSelected = string.Empty;
             }

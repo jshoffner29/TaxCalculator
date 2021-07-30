@@ -52,8 +52,8 @@
             {
                 @Html.DropDownListFor(m => m.FilteredCityNameSelected, Model.GetViewList<USLocationModel>("FilteredCityNameSelected"), " -- Filter on city name -- ")
                 @Html.DropDownListFor(m => m.FilteredZipCodeSelected, Model.GetViewList<USLocationModel>("FilteredZipCodeSelected"), " -- Filter on zip code -- ")
-                <input type="submit" value="Search" />
-                <input type="submit" name="clear" value="Clear" />
+                <input type="submit" value="Search"/>
+                <button type="submit" name="clear" value="True">Clear</button>
             }
 
             @using (Html.BeginForm("ZipCodeSelected", "Home", FormMethod.Post))
@@ -89,7 +89,7 @@
 
                         <div>
                             <input type="submit" name="submit" value="View Tax Rate" /> @*Get tax rate*@
-                            <input type="submit" name="clear" value="View Zip Codes" /> @*Clear zip code, allow view zip code list*@
+                            <button type="submit" name="viewZipCode" value="True">View Zip Codes</button> @*Clear zip code, allow view zip code list*@
                         </div>
                         @if (Model.TaxRateForLocation != -1)
                         {
