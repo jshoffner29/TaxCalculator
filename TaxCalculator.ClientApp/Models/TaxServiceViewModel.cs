@@ -33,6 +33,9 @@ namespace TaxCalculator.ClientApp.Models
         {
             OrderItems = new List<OrderItemModel>();
             InstructionalMessageContext = new InstructionalMessageContext(new DefaultMessageStrategy());
+
+            TaxRateForLocation = -1;
+            OrderTaxAmount = -1;
         }
         internal void SetStateCode(IZipCodeService zipCodeService, string stateCode)
         {
